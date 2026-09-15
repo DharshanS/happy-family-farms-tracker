@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Happy Family Farms - Daily Expense & Revenue Tracker</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- SheetJS xlsx CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="styles.css?v=5.0">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-cow"></i>
+        </div>
+        <div class="brand-text">
+          <h2>Happy Family Farms</h2>
+          <span class="sub">Dairy Management System</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <a href="#dashboard" class="nav-item active" data-tab="dashboard">
+          <i class="fa-solid fa-chart-pie"></i> Dashboard
+        </a>
+        <a href="#customers" class="nav-item" data-tab="customers">
+          <i class="fa-solid fa-address-book"></i> Customers
+        </a>
+        <a href="#expenses" class="nav-item" data-tab="expenses">
+          <i class="fa-solid fa-receipt"></i> Farm Expenses
+        </a>
+        <a href="#daily-entry" class="nav-item" data-tab="daily-entry">
+          <i class="fa-solid fa-calendar-plus"></i> Daily Entry
+        </a>
+        <a href="#records" class="nav-item" data-tab="records">
+          <i class="fa-solid fa-table-list"></i> Log Records
+        </a>
+        <a href="#settings" class="nav-item" data-tab="settings">
+          <i class="fa-solid fa-sliders"></i> Rates & Pricing
+        </a>
+      </nav>
+
+      <div class="sidebar-action">
+        <button id="btnExportExcel" class="btn btn-emerald w-full">
+          <i class="fa-solid fa-file-excel"></i> Download Excel (.xlsx)
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <p><i class="fa-solid fa-shield-halved"></i> Cattle & Goat Milk Active</p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Header Bar -->
+      <header class="top-header">
+        <div class="header-title">
+          <h1 id="pageTitle">Happy Family Farms - Overview & Summary</h1>
+          <p class="subtitle">Track Cattle Milk & Goat Milk revenue (175ml, 475ml, 500ml, 750ml, 1000ml) and daily operating expenses.</p>
+        </div>
+        <div class="header-actions">
+          <button id="btnQuickExpense" class="btn btn-rose">
+            <i class="fa-solid fa-receipt"></i> Log Expense
+          </button>
+          <button id="btnQuickRegister" class="btn btn-amber">
+            <i class="fa-solid fa-user-plus"></i> Register Customer
+          </button>
+          <button id="btnQuickAdd" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Daily Record
+          </button>
+          <a href="Happy_Family_Farms_Expense_And_Revenue_Tracker.xlsx" download class="btn btn-outline">
+            <i class="fa-solid fa-download"></i> Direct File Download
+          </a>
+        </div>
+      </header>
+
+      <!-- TAB 1: DASHBOARD -->
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="metrics-grid">
+          <div class="metric-card revenue-card">
+            <div class="card-icon"><i class="fa-solid fa-bottle-water"></i></div>
+            <div class="card-info">
+              <span class="label">Total Revenue</span>
+              <h3 id="statTotalRev">Rs. 0.00</h3>
+              <span class="trend positive"><i class="fa-solid fa-arrow-trend-up"></i> Milk Sales</span>
+            </div>
+          </div>
+
+          <div class="metric-card volume-card">
+            <div class="card-icon"><i class="fa-solid fa-glass-water"></i></div>
+            <div class="card-info">
+              <span class="label">Total Volume Sold</span>
+              <h3 id="statTotalLitres">0.00 L</h3>
+              <span class="sub-detail" id="statBottleBreakdown">175ml / 475ml / 500ml / 750ml / 1L</span>
+            </div>
+          </div>
+
+          <div class="metric-card expense-card">
+            <div class="card-icon"><i class="fa-solid fa-receipt"></i></div>
+            <div class="card-info">
+              <span class="label">Total Expenses</span>
+              <h3 id="statTotalExp">Rs. 0.00</h3>
+              <span class="trend negative"><i class="fa-solid fa-wheat-awn"></i> Silage, Wages, Feed</span>
+            </div>
+          </div>
+
+          <div class="metric-card profit-card">
+            <div class="card-icon"><i class="fa-solid fa-wallet"></i></div>
+            <div class="card-info">
+              <span class="label">Net Profit</span>
+              <h3 id="statNetProfit">Rs. 0.00</h3>
+              <span class="badge" id="statMarginBadge">0% Margin</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milk Category Breakdown -->
+        <div class="section-title-wrapper" style="margin: 20px 0 12px 0;">
+          <h3 style="font-size: 15px; color: var(--text-muted);"><i class="fa-solid fa-cow"></i> Sales Breakdown by Milk Category</h3>
+        </div>
+        <div class="category-summary-grid">
+          <div class="cat-pill pill-teal">
+            <span class="cat-title"><i class="fa-solid fa-cow"></i> Cattle Milk</span>
+            <strong id="catCattleRev">Rs. 0.00</strong>
+            <small id="catCattleLitres">0.00 L</small>
+          </div>
+          <div class="cat-pill pill-indigo">
+            <span class="cat-title"><i class="fa-solid fa-leaf"></i> Goat Milk</span>
+            <strong id="catGoatRev">Rs. 0.00</strong>
+            <small id="catGoatLitres">0.00 L</small>
+          </div>
+        </div>
+
+        <!-- Customer Breakdown -->
+        <div class="section-title-wrapper" style="margin: 20px 0 12px 0;">
+          <h3 style="font-size: 15px; color: var(--text-muted);"><i class="fa-solid fa-users"></i> Sales Breakdown by Customer Category</h3>
+        </div>
+        <div class="category-summary-grid">
+          <div class="cat-pill pill-amber">
+            <span class="cat-title"><i class="fa-solid fa-calendar-day"></i> Daily Customers</span>
+            <strong id="custDailyRev">Rs. 0.00</strong>
+            <small id="custDailyLitres">0.00 L</small>
+          </div>
+          <div class="cat-pill pill-purple">
+            <span class="cat-title"><i class="fa-solid fa-calendar-week"></i> Weekly Customers</span>
+            <strong id="custWeeklyRev">Rs. 0.00</strong>
+            <small id="custWeeklyLitres">0.00 L</small>
+          </div>
+          <div class="cat-pill pill-indigo">
+            <span class="cat-title"><i class="fa-solid fa-calendar-check"></i> Monthly Customers</span>
+            <strong id="custMonthlyRev">Rs. 0.00</strong>
+            <small id="custMonthlyLitres">0.00 L</small>
+          </div>
+          <div class="cat-pill pill-teal">
+            <span class="cat-title"><i class="fa-solid fa-clock"></i> Time-Being (Spot)</span>
+            <strong id="custTimeBeingRev">Rs. 0.00</strong>
+            <small id="custTimeBeingLitres">0.00 L</small>
+          </div>
+        </div>
+
+        <!-- Expenses Summary -->
+        <div class="section-title-wrapper" style="margin: 20px 0 12px 0;">
+          <h3 style="font-size: 15px; color: var(--text-muted);"><i class="fa-solid fa-receipt"></i> Farm Operating Expenses</h3>
+        </div>
+        <div class="category-summary-grid">
+          <div class="cat-pill">
+            <span class="cat-title"><i class="fa-solid fa-seedling"></i> Silage</span>
+            <strong id="catSilageCost">Rs. 0.00</strong>
+          </div>
+          <div class="cat-pill">
+            <span class="cat-title"><i class="fa-solid fa-person-digging"></i> Grass Cutter Wage</span>
+            <strong id="catWageCost">Rs. 0.00</strong>
+          </div>
+          <div class="cat-pill">
+            <span class="cat-title"><i class="fa-solid fa-bowl-food"></i> Feed / Punnaku</span>
+            <strong id="catFeedCost">Rs. 0.00</strong>
+          </div>
+          <div class="cat-pill">
+            <span class="cat-title"><i class="fa-solid fa-coins"></i> Other Expenses</span>
+            <strong id="catOtherCost">Rs. 0.00</strong>
+          </div>
+        </div>
+
+        <div class="charts-grid" style="margin-top: 24px;">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3><i class="fa-solid fa-chart-line"></i> Financial Trend (Revenue vs Expenses)</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="chartFinancials"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3><i class="fa-solid fa-chart-pie"></i> Revenue by Milk Category</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="chartCustomerBreakdown"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: CUSTOMER DIRECTORY & REGISTRATION -->
+      <section id="tab-customers" class="tab-content">
+        <div class="form-container" style="margin-bottom: 32px;">
+          <div class="form-header">
+            <h2><i class="fa-solid fa-user-plus"></i> Customer Registration Master</h2>
+            <p>Register new customers (Daily, Weekly, Monthly, Time-Being) with default orders for Cattle Milk, Goat Milk, or Both!</p>
+          </div>
+
+          <form id="customerForm" class="grid-form">
+            <div class="form-section customer-section">
+              <h3 class="section-title text-amber"><i class="fa-solid fa-id-card"></i> Customer Personal Details</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="regCustName">Customer Name</label>
+                  <input type="text" id="regCustName" placeholder="e.g. Dharshan" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="regCustType">Customer Category</label>
+                  <select id="regCustType" class="select-input" required>
+                    <option value="Daily Customer">Daily Customer (Regular Route Delivery)</option>
+                    <option value="Weekly Customer">Weekly Customer (Weekly Account / Bill)</option>
+                    <option value="Monthly Customer">Monthly Customer (Bulk / Account)</option>
+                    <option value="Time-Being">Time-Being (Spot / Ad-hoc)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="regMilkType">Milk Preference</label>
+                  <select id="regMilkType" class="select-input" required>
+                    <option value="Both (Cattle & Goat)">Both (Cattle & Goat Milk)</option>
+                    <option value="Cattle Milk Only">Cattle Milk Only</option>
+                    <option value="Goat Milk Only">Goat Milk Only</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="regPhone">Phone Number</label>
+                  <input type="tel" id="regPhone" placeholder="e.g. 0764805061">
+                  <small id="phoneValidationNotice" style="font-size: 11px; margin-top: 2px;"></small>
+                </div>
+              </div>
+
+              <div class="form-group full-width" style="margin-top: 12px;">
+                <label for="regAddress">Delivery Address / Route Details</label>
+                <input type="text" id="regAddress" placeholder="e.g. Door No 12, Route 1 - Green Valley">
+              </div>
+            </div>
+
+            <!-- Cattle Milk Default Preference -->
+            <div class="form-section revenue-section">
+              <h3 class="section-title text-teal"><i class="fa-solid fa-cow"></i> Default Cattle Milk Bottle Preferences</h3>
+              <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                <div class="form-group">
+                  <label for="regCattle175">175ml Qty</label>
+                  <input type="number" id="regCattle175" min="0" value="0">
+                </div>
+                <div class="form-group">
+                  <label for="regCattle475">475ml Qty</label>
+                  <input type="number" id="regCattle475" min="0" value="0">
+                </div>
+                <div class="form-group">
+                  <label for="regCattle500">500ml Qty</label>
+                  <input type="number" id="regCattle500" min="0" value="0">
+                </div>
+                <div class="form-group">
+                  <label for="regCattle750">750ml Qty</label>
+                  <input type="number" id="regCattle750" min="0" value="0">
+                </div>
+                <div class="form-group">
+                  <label for="regCattle1000">1000ml (1L) Qty</label>
+                  <input type="number" id="regCattle1000" min="0" value="0">
+                </div>
+              </div>
+            </div>
+
+            <!-- Goat Milk Default Preference -->
+            <div class="form-section" style="border-left: 4px solid var(--indigo-accent);">
+              <h3 class="section-title text-indigo"><i class="fa-solid fa-leaf"></i> Default Goat Milk Bottle Preferences</h3>
+              <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                <div class="form-group">
+                  <label for="regGoat175">175ml Qty</label>
+                  <input type="number" id="regGoat175" min="0" value="0">
+                </div>
+                <div class="form-group">
+                  <label for="regGoat475">475ml Qty</label>
+                  <input type="number" id="regGoat475" min="0" value="0">
+                </div>
+                <div class="form-group">
+                  <label for="regGoat500">500ml Qty</label>
+                  <input type="number" id="regGoat500" min="0" value="0">
+                </div>
+                <div class="form-group">
+                  <label for="regGoat750">750ml Qty</label>
+                  <input type="number" id="regGoat750" min="0" value="0">
+                </div>
+                <div class="form-group">
+                  <label for="regGoat1000">1000ml (1L) Qty</label>
+                  <input type="number" id="regGoat1000" min="0" value="0">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-amber btn-lg">
+                <i class="fa-solid fa-floppy-disk"></i> Save & Register Customer
+              </button>
+              <button type="button" id="btnResetCustForm" class="btn btn-secondary btn-lg">Reset</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <h3><i class="fa-solid fa-users-viewfinder"></i> Registered Customer Directory</h3>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Customer Name</th>
+                  <th>Milk Preference</th>
+                  <th>Category</th>
+                  <th>Phone Number</th>
+                  <th>Delivery Address / Route</th>
+                  <th>Cattle Defaults (175/475/500/750/1L)</th>
+                  <th>Goat Defaults (175/475/500/750/1L)</th>
+                  <th>Total Litres</th>
+                  <th>Total Revenue</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="custTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: SEPARATE FARM EXPENSES LOG -->
+      <section id="tab-expenses" class="tab-content">
+        <div class="form-container" style="margin-bottom: 32px;">
+          <div class="form-header">
+            <h2 id="expFormTitle"><i class="fa-solid fa-receipt"></i> Log Separate Farm Expense</h2>
+            <p>Log silage purchases, grass cutter wages, cattle feed/punnaku, or medicine expenses independently by date.</p>
+          </div>
+
+          <form id="standaloneExpenseForm" class="grid-form">
+            <input type="hidden" id="editingExpId" value="">
+
+            <div class="form-section expense-section">
+              <h3 class="section-title text-rose"><i class="fa-solid fa-file-invoice-dollar"></i> Expense Entry Details</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="expLogDate">Expense Date</label>
+                  <input type="date" id="expLogDate" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="expCategory">Expense Category</label>
+                  <select id="expCategory" class="select-input" required>
+                    <option value="Silage">Silage (Fodder / Crops)</option>
+                    <option value="Grass Cutter Wage">Grass Cutter Wage (Labor)</option>
+                    <option value="Feed / Punnaku">Feed / Punnaku (Cattle Oil Cake)</option>
+                    <option value="Veterinary / Medicine">Veterinary / Medicine</option>
+                    <option value="Electricity / Utility">Electricity / Utility</option>
+                    <option value="Other Expense">Other Expense</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="expPayee">Supplier / Worker / Note</label>
+                  <input type="text" id="expPayee" placeholder="e.g. Murugan Worker, Lakshmi Store" required>
+                </div>
+              </div>
+
+              <div class="form-row" style="margin-top: 16px;">
+                <div class="form-group">
+                  <label for="expAmount">Amount Paid (Rs.)</label>
+                  <input type="number" id="expAmount" min="0" step="0.01" placeholder="0.00" required>
+                </div>
+
+                <div class="form-group full-width" style="grid-column: span 2;">
+                  <label for="expNotes">Remarks / Payment Notes</label>
+                  <input type="text" id="expNotes" placeholder="e.g. Weekly wage, 50kg bag, tractor load">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="btnSubmitExpForm" class="btn btn-rose btn-lg">
+                <i class="fa-solid fa-plus-circle"></i> Save Expense Record
+              </button>
+              <button type="button" id="btnResetExpForm" class="btn btn-secondary btn-lg">Reset</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Expense Log Table -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3><i class="fa-solid fa-list-check"></i> Farm Expense Directory & Logs</h3>
+            <div class="table-actions" style="display: flex; gap: 12px; align-items: center;">
+              <select id="filterExpCategory" class="select-input select-sm">
+                <option value="ALL">All Categories</option>
+                <option value="Silage">Silage</option>
+                <option value="Grass Cutter Wage">Grass Cutter Wage</option>
+                <option value="Feed / Punnaku">Feed / Punnaku</option>
+                <option value="Veterinary / Medicine">Veterinary / Medicine</option>
+                <option value="Electricity / Utility">Electricity / Utility</option>
+                <option value="Other Expense">Other Expense</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>Supplier / Worker</th>
+                  <th>Amount Paid</th>
+                  <th>Remarks</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="expTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: DAILY ENTRY FORM (MILK & COMBINED) -->
+      <section id="tab-daily-entry" class="tab-content">
+        <div class="form-container">
+          <div class="form-header">
+            <h2 id="entryFormTitle"><i class="fa-solid fa-pen-to-square"></i> Record Farm Transaction</h2>
+            <p>Customers can buy Cattle Milk, Goat Milk, or BOTH in the same daily entry!</p>
+          </div>
+
+          <!-- Date Status Banner -->
+          <div id="dateStatusNotice" class="status-notice" style="display: none;"></div>
+
+          <form id="entryForm" class="grid-form">
+            <input type="hidden" id="editingRecordId" value="">
+
+            <div class="form-section customer-section">
+              <h3 class="section-title text-amber"><i class="fa-solid fa-calendar-day"></i> Transaction Date & Customer Details</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="entryDate">Transaction Date (Unique per Day)</label>
+                  <input type="date" id="entryDate" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="selectRegisteredCustomer">Auto-fill Registered Customer (Optional)</label>
+                  <select id="selectRegisteredCustomer" class="select-input">
+                    <option value="">-- Select Registered Customer (Auto-fill) --</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="custType">Customer Category</label>
+                  <select id="custType" class="select-input" required>
+                    <option value="Daily Customer">Daily Customer (Regular Route Delivery)</option>
+                    <option value="Weekly Customer">Weekly Customer (Weekly Account / Bill)</option>
+                    <option value="Monthly Customer">Monthly Customer (Bulk / Account)</option>
+                    <option value="Time-Being">Time-Being (Ad-hoc / Spot Walk-in)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group full-width" style="margin-top: 12px;">
+                <label for="custName">Customer / Route Name</label>
+                <input type="text" id="custName" placeholder="e.g. Route 1 & Spot Sales" required>
+              </div>
+            </div>
+
+            <!-- 🐮 Cattle Milk Bottle Sales Section -->
+            <div class="form-section revenue-section">
+              <h3 class="section-title text-teal"><i class="fa-solid fa-cow"></i> 1. Cattle Milk Bottle Sales</h3>
+              <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                <div class="form-group">
+                  <label for="cattle_q175">175ml Qty</label>
+                  <input type="number" id="cattle_q175" min="0" value="0">
+                  <small class="rate-preview" id="cattle_rate175Preview">Rs. 15.00</small>
+                </div>
+                <div class="form-group">
+                  <label for="cattle_q475">475ml Qty</label>
+                  <input type="number" id="cattle_q475" min="0" value="0">
+                  <small class="rate-preview" id="cattle_rate475Preview">Rs. 35.00</small>
+                </div>
+                <div class="form-group">
+                  <label for="cattle_q500">500ml Qty</label>
+                  <input type="number" id="cattle_q500" min="0" value="0">
+                  <small class="rate-preview" id="cattle_rate500Preview">Rs. 38.00</small>
+                </div>
+                <div class="form-group">
+                  <label for="cattle_q750">750ml Qty</label>
+                  <input type="number" id="cattle_q750" min="0" value="0">
+                  <small class="rate-preview" id="cattle_rate750Preview">Rs. 50.00</small>
+                </div>
+                <div class="form-group">
+                  <label for="cattle_q1000">1000ml (1L) Qty</label>
+                  <input type="number" id="cattle_q1000" min="0" value="0">
+                  <small class="rate-preview" id="cattle_rate1000Preview">Rs. 65.00</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- 🐐 Goat Milk Bottle Sales Section -->
+            <div class="form-section" style="border-left: 4px solid var(--indigo-accent); background: rgba(99, 102, 241, 0.05);">
+              <h3 class="section-title text-indigo"><i class="fa-solid fa-leaf"></i> 2. Goat Milk Bottle Sales</h3>
+              <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                <div class="form-group">
+                  <label for="goat_q175">175ml Qty</label>
+                  <input type="number" id="goat_q175" min="0" value="0">
+                  <small class="rate-preview" id="goat_rate175Preview">Rs. 25.00</small>
+                </div>
+                <div class="form-group">
+                  <label for="goat_q475">475ml Qty</label>
+                  <input type="number" id="goat_q475" min="0" value="0">
+                  <small class="rate-preview" id="goat_rate475Preview">Rs. 60.00</small>
+                </div>
+                <div class="form-group">
+                  <label for="goat_q500">500ml Qty</label>
+                  <input type="number" id="goat_q500" min="0" value="0">
+                  <small class="rate-preview" id="goat_rate500Preview">Rs. 65.00</small>
+                </div>
+                <div class="form-group">
+                  <label for="goat_q750">750ml Qty</label>
+                  <input type="number" id="goat_q750" min="0" value="0">
+                  <small class="rate-preview" id="goat_rate750Preview">Rs. 90.00</small>
+                </div>
+                <div class="form-group">
+                  <label for="goat_q1000">1000ml (1L) Qty</label>
+                  <input type="number" id="goat_q1000" min="0" value="0">
+                  <small class="rate-preview" id="goat_rate1000Preview">Rs. 120.00</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Calculation Preview -->
+            <div class="calc-preview" style="flex-direction: column; gap: 8px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>🐮 Cattle Milk: <span id="liveCattleLitres" style="color: var(--teal-accent);">0.00 L</span> (<span id="liveCattleRev">Rs. 0.00</span>)</span>
+                <span>🐐 Goat Milk: <span id="liveGoatLitres" style="color: var(--indigo-accent);">0.00 L</span> (<span id="liveGoatRev">Rs. 0.00</span>)</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; border-top: 1px dashed var(--border-color); padding-top: 6px; font-weight: 700; font-size: 15px;">
+                <span>Total Combined Volume: <strong id="liveLitres">0.00 L</strong></span>
+                <span>Total Combined Revenue: <strong id="liveRevenue">Rs. 0.00</strong></span>
+              </div>
+            </div>
+
+            <div class="form-section expense-section">
+              <h3 class="section-title text-rose"><i class="fa-solid fa-receipt"></i> Daily Farm Expenses</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="expSilage">Silage Expense (Rs.)</label>
+                  <input type="number" id="expSilage" min="0" step="0.01" value="0" placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                  <label for="expWage">Grass Cutter Wage (Rs.)</label>
+                  <input type="number" id="expWage" min="0" step="0.01" value="0" placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                  <label for="expFeed">Feed / Punnaku Cost (Rs.)</label>
+                  <input type="number" id="expFeed" min="0" step="0.01" value="0" placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                  <label for="expOther">Other Expenses (Rs.)</label>
+                  <input type="number" id="expOther" min="0" step="0.01" value="0" placeholder="0.00">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="remarks">Daily Operations Remarks / Notes</label>
+              <textarea id="remarks" rows="2" class="select-input" placeholder="e.g. Good morning yield, extra grass cutter wage paid"></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="btnSubmitForm" class="btn btn-primary btn-lg">
+                <i class="fa-solid fa-check"></i> Save Daily Record
+              </button>
+              <button type="button" id="btnResetForm" class="btn btn-secondary btn-lg">Reset Form</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 5: LOG RECORDS HISTORY TABLE -->
+      <section id="tab-records" class="tab-content">
+        <div class="table-card">
+          <div class="table-header">
+            <h3><i class="fa-solid fa-list-check"></i> Daily Log History</h3>
+            <div class="table-actions" style="display: flex; gap: 12px; align-items: center;">
+              <select id="filterCustType" class="select-input select-sm">
+                <option value="ALL">All Categories</option>
+                <option value="Daily Customer">Daily Customers</option>
+                <option value="Weekly Customer">Weekly Customers</option>
+                <option value="Monthly Customer">Monthly Customers</option>
+                <option value="Time-Being">Time-Being (Ad-hoc)</option>
+              </select>
+              <button id="btnClearAll" class="btn btn-danger-outline btn-sm">
+                <i class="fa-solid fa-trash-can"></i> Clear Data
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="recordsTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Customer Category</th>
+                  <th>Customer / Note</th>
+                  <th>Cattle Bottles (175/475/500/750/1L)</th>
+                  <th>Goat Bottles (175/475/500/750/1L)</th>
+                  <th>Total Litres</th>
+                  <th>Total Revenue</th>
+                  <th>Silage</th>
+                  <th>Wage</th>
+                  <th>Feed/Punnaku</th>
+                  <th>Other</th>
+                  <th>Expenses</th>
+                  <th>Profit</th>
+                  <th>Remarks</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: SETTINGS & RATES -->
+      <section id="tab-settings" class="tab-content">
+        <div class="form-container">
+          <div class="form-header">
+            <h2><i class="fa-solid fa-sliders"></i> Master Pricing & Rate Configuration</h2>
+            <p>Set separate selling prices per bottle size for Cattle Milk and Goat Milk across 175ml, 475ml, 500ml, 750ml, and 1000ml.</p>
+          </div>
+
+          <form id="settingsForm" class="grid-form">
+            <!-- Cattle Milk Selling Prices -->
+            <div class="form-section">
+              <h3 class="section-title text-teal"><i class="fa-solid fa-cow"></i> Cattle Milk Selling Prices (Rs.)</h3>
+              <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+                <div class="form-group">
+                  <label for="settingCattle175">175ml Price (Rs.)</label>
+                  <input type="number" id="settingCattle175" min="0" step="0.5" value="15.00" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingCattle475">475ml Price (Rs.)</label>
+                  <input type="number" id="settingCattle475" min="0" step="0.5" value="35.00" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingCattle500">500ml Price (Rs.)</label>
+                  <input type="number" id="settingCattle500" min="0" step="0.5" value="38.00" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingCattle750">750ml Price (Rs.)</label>
+                  <input type="number" id="settingCattle750" min="0" step="0.5" value="50.00" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingCattle1000">1000ml (1L) Price (Rs.)</label>
+                  <input type="number" id="settingCattle1000" min="0" step="0.5" value="65.00" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Goat Milk Selling Prices -->
+            <div class="form-section">
+              <h3 class="section-title text-indigo"><i class="fa-solid fa-leaf"></i> Goat Milk Selling Prices (Rs.)</h3>
+              <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+                <div class="form-group">
+                  <label for="settingGoat175">175ml Price (Rs.)</label>
+                  <input type="number" id="settingGoat175" min="0" step="0.5" value="25.00" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingGoat475">475ml Price (Rs.)</label>
+                  <input type="number" id="settingGoat475" min="0" step="0.5" value="60.00" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingGoat500">500ml Price (Rs.)</label>
+                  <input type="number" id="settingGoat500" min="0" step="0.5" value="65.00" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingGoat750">750ml Price (Rs.)</label>
+                  <input type="number" id="settingGoat750" min="0" step="0.5" value="90.00" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingGoat1000">1000ml (1L) Price (Rs.)</label>
+                  <input type="number" id="settingGoat1000" min="0" step="0.5" value="120.00" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fa-solid fa-floppy-disk"></i> Save Rate Settings
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- VIEW RECORD MODAL -->
+  <div id="viewModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-receipt"></i> Transaction Details</h3>
+        <button class="modal-close" onclick="closeViewModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="viewModalBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeViewModal()">Close</button>
+        <button id="btnEditFromView" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i> Edit Date Record</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js?v=5.0"></script>
+</body>
+</html>
