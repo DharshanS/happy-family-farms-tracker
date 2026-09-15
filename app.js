@@ -135,9 +135,65 @@ function validatePhoneNumber(phoneStr) {
   };
 }
 
+// Touch Stepper Controls for Mobile Bottle Inputs
+function initTouchSteppers() {
+  const bottleInputIds = [
+    'cattle_q175', 'cattle_q475', 'cattle_q500', 'cattle_q750', 'cattle_q1000',
+    'goat_q175', 'goat_q475', 'goat_q500', 'goat_q750', 'goat_q1000',
+    'regCattle175', 'regCattle475', 'regCattle500', 'regCattle750', 'regCattle1000',
+    'regGoat175', 'regGoat475', 'regGoat500', 'regGoat750', 'regGoat1000'
+  ];
+
+  bottleInputIds.forEach(id => {
+    const inp = document.getElementById(id);
+    if (inp && !inp.dataset.stepperInit) {
+      inp.dataset.stepperInit = "true";
+      inp.setAttribute('inputmode', 'numeric');
+      inp.setAttribute('pattern', '[0-9]*');
+      
+      const wrapper = document.createElement('div');
+      wrapper.className = 'stepper-input';
+      
+      const btnMinus = document.createElement('button');
+      btnMinus.type = 'button';
+      btnMinus.className = 'btn-stepper btn-minus';
+      btnMinus.innerHTML = '<i class="fa-solid fa-minus"></i>';
+      btnMinus.setAttribute('aria-label', 'Decrease quantity');
+      btnMinus.addEventListener('click', (e) => {
+        e.preventDefault();
+        let val = parseInt(inp.value, 10) || 0;
+        if (val > 0) {
+          inp.value = val - 1;
+          inp.dispatchEvent(new Event('input', { bubbles: true }));
+          inp.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+
+      const btnPlus = document.createElement('button');
+      btnPlus.type = 'button';
+      btnPlus.className = 'btn-stepper btn-plus';
+      btnPlus.innerHTML = '<i class="fa-solid fa-plus"></i>';
+      btnPlus.setAttribute('aria-label', 'Increase quantity');
+      btnPlus.addEventListener('click', (e) => {
+        e.preventDefault();
+        let val = parseInt(inp.value, 10) || 0;
+        inp.value = val + 1;
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+        inp.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+
+      inp.parentNode.insertBefore(wrapper, inp);
+      wrapper.appendChild(btnMinus);
+      wrapper.appendChild(inp);
+      wrapper.appendChild(btnPlus);
+    }
+  });
+}
+
 // Initialize Application
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
+  initTouchSteppers();
   initFormListeners();
   initCustomerRegistrationForm();
   initStandaloneExpenseForm();
