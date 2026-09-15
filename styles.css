@@ -49,6 +49,9 @@ body {
   color: var(--text-main);
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Layout */
@@ -577,12 +580,16 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
+  min-width: 0;
+  width: 100%;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
+  width: 100%;
 }
 
 .form-group.full-width {
@@ -607,6 +614,10 @@ input, .select-input {
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 select.select-input option {
@@ -878,8 +889,9 @@ input:focus, .select-input:focus {
 /* Responsive Media Queries */
 @media (max-width: 1024px) {
   .app-container {
-    flex-direction: column;
-    width: 100%;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
     min-height: 100vh;
   }
 
@@ -938,27 +950,29 @@ input:focus, .select-input:focus {
 
   /* Sidebar Drawer on Mobile */
   .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    z-index: 999;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 10px 0 25px rgba(0,0,0,0.5);
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 280px !important;
+    height: 100vh !important;
+    z-index: 999 !important;
+    box-shadow: 10px 0 25px rgba(0,0,0,0.5) !important;
   }
 
   .sidebar.open {
-    transform: translateX(0);
+    display: flex !important;
+    animation: slideInLeft 0.25s ease forwards;
   }
 
   /* Main Content Layout for Mobile */
   .main-content {
-    padding: 14px 12px 90px 12px;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    overflow-x: hidden;
+    display: block !important;
+    padding: 14px 12px 90px 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
   }
 
   .top-header {
