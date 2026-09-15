@@ -154,9 +154,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Navigation Logic
 function initNavigation() {
-  const navItems = document.querySelectorAll('.nav-item');
+  const desktopNavItems = document.querySelectorAll('.nav-item');
+  const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
   const tabContents = document.querySelectorAll('.tab-content');
   const pageTitle = document.getElementById('pageTitle');
+  const sidebar = document.querySelector('.sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
 
   const titles = {
     'dashboard': 'Happy Family Farms - Overview & Summary',
@@ -167,46 +170,87 @@ function initNavigation() {
     'settings': 'Happy Family Farms - Rates & Pricing'
   };
 
-  navItems.forEach(item => {
+  function switchTab(targetTab) {
+    desktopNavItems.forEach(nav => {
+      if (nav.getAttribute('data-tab') === targetTab) nav.classList.add('active');
+      else nav.classList.remove('active');
+    });
+
+    mobileNavItems.forEach(mnav => {
+      if (mnav.getAttribute('data-tab') === targetTab) mnav.classList.add('active');
+      else mnav.classList.remove('active');
+    });
+
+    tabContents.forEach(tab => tab.classList.remove('active'));
+
+    const targetElem = document.getElementById(`tab-${targetTab}`);
+    if (targetElem) targetElem.classList.add('active');
+    if (titles[targetTab] && pageTitle) pageTitle.textContent = titles[targetTab];
+
+    if (sidebar && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (targetTab === 'dashboard') {
+      renderCharts();
+    } else if (targetTab === 'expenses') {
+      renderExpensesTable();
+    }
+  }
+
+  desktopNavItems.forEach(item => {
     item.addEventListener('click', (e) => {
       e.preventDefault();
-      const targetTab = item.getAttribute('data-tab');
-
-      navItems.forEach(nav => nav.classList.remove('active'));
-      tabContents.forEach(tab => tab.classList.remove('active'));
-
-      item.classList.add('active');
-      const targetElem = document.getElementById(`tab-${targetTab}`);
-      if (targetElem) targetElem.classList.add('active');
-      if (titles[targetTab] && pageTitle) pageTitle.textContent = titles[targetTab];
-
-      if (targetTab === 'dashboard') {
-        renderCharts();
-      } else if (targetTab === 'expenses') {
-        renderExpensesTable();
-      }
+      switchTab(item.getAttribute('data-tab'));
     });
   });
 
-  const btnQuickAdd = document.getElementById('btnQuickAdd');
-  if (btnQuickAdd) {
-    btnQuickAdd.addEventListener('click', () => {
-      const tabBtn = document.querySelector('[data-tab="daily-entry"]');
-      if (tabBtn) tabBtn.click();
-      const today = new Date().toISOString().split('T')[0];
-      const entryDateElem = document.getElementById('entryDate');
-      if (entryDateElem) {
-        entryDateElem.value = today;
-        checkAndLoadDateRecord(today);
-      }
+  mobileNavItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchTab(item.getAttribute('data-tab'));
+    });
+  });
+
+  // Mobile Drawer Toggle
+  const mobileNavToggle = document.getElementById('mobileNavToggle');
+  if (mobileNavToggle) {
+    mobileNavToggle.addEventListener('click', () => {
+      if (sidebar) sidebar.classList.toggle('open');
+      if (sidebarOverlay) sidebarOverlay.classList.toggle('active');
     });
   }
+
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', () => {
+      if (sidebar) sidebar.classList.remove('open');
+      sidebarOverlay.classList.remove('active');
+    });
+  }
+
+  const btnQuickAdd = document.getElementById('btnQuickAdd');
+  const mobileQuickAddBtn = document.getElementById('mobileQuickAddBtn');
+
+  const handleQuickAdd = () => {
+    switchTab('daily-entry');
+    const today = new Date().toISOString().split('T')[0];
+    const entryDateElem = document.getElementById('entryDate');
+    if (entryDateElem) {
+      entryDateElem.value = today;
+      checkAndLoadDateRecord(today);
+    }
+  };
+
+  if (btnQuickAdd) btnQuickAdd.addEventListener('click', handleQuickAdd);
+  if (mobileQuickAddBtn) mobileQuickAddBtn.addEventListener('click', handleQuickAdd);
 
   const btnQuickRegister = document.getElementById('btnQuickRegister');
   if (btnQuickRegister) {
     btnQuickRegister.addEventListener('click', () => {
-      const tabBtn = document.querySelector('[data-tab="customers"]');
-      if (tabBtn) tabBtn.click();
+      switchTab('customers');
     });
   }
 

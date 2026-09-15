@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1329">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Happy Family Farms">
+  <link rel="manifest" href="manifest.json">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Happy Family Farms - Daily Expense & Revenue Tracker</title>
   <!-- Google Fonts -->
@@ -15,9 +20,26 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- SheetJS xlsx CDN -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="styles.css?v=5.0">
+  <link rel="stylesheet" href="styles.css?v=6.0">
 </head>
 <body>
+  <!-- Mobile Sidebar Overlay -->
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <!-- Mobile Sticky Top Header Bar -->
+  <header class="mobile-top-bar">
+    <button id="mobileNavToggle" class="mobile-menu-btn" aria-label="Toggle Navigation">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="mobile-brand">
+      <div class="brand-icon-sm"><i class="fa-solid fa-cow"></i></div>
+      <span class="mobile-brand-title">Happy Family Farms</span>
+    </div>
+    <button id="mobileQuickAddBtn" class="mobile-quick-btn" title="Add Daily Record">
+      <i class="fa-solid fa-plus"></i>
+    </button>
+  </header>
+
   <div class="app-container">
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
@@ -747,6 +769,34 @@
     </div>
   </div>
 
-  <script src="app.js?v=5.0"></script>
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <a href="#dashboard" class="mobile-nav-item active" data-tab="dashboard">
+      <i class="fa-solid fa-chart-pie"></i>
+      <span>Dash</span>
+    </a>
+    <a href="#customers" class="mobile-nav-item" data-tab="customers">
+      <i class="fa-solid fa-address-book"></i>
+      <span>Customers</span>
+    </a>
+    <a href="#daily-entry" class="mobile-nav-item" data-tab="daily-entry">
+      <i class="fa-solid fa-calendar-plus"></i>
+      <span>Entry</span>
+    </a>
+    <a href="#expenses" class="mobile-nav-item" data-tab="expenses">
+      <i class="fa-solid fa-receipt"></i>
+      <span>Expense</span>
+    </a>
+    <a href="#records" class="mobile-nav-item" data-tab="records">
+      <i class="fa-solid fa-table-list"></i>
+      <span>Logs</span>
+    </a>
+    <a href="#settings" class="mobile-nav-item" data-tab="settings">
+      <i class="fa-solid fa-sliders"></i>
+      <span>Rates</span>
+    </a>
+  </nav>
+
+  <script src="app.js?v=6.0"></script>
 </body>
 </html>
