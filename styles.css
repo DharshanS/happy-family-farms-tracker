@@ -1086,7 +1086,7 @@ input:focus, .select-input:focus {
     grid-template-columns: 1fr;
   }
 
-  .form-row {
+  .form-row:not(.bottle-inputs-grid) {
     grid-template-columns: 1fr !important;
   }
 
@@ -1095,18 +1095,35 @@ input:focus, .select-input:focus {
   }
 
   .data-table th, .data-table td {
-    padding: 10px 10px;
-    font-size: 13px;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  /* iOS Bottom Sheet Modal */
+  .modal-overlay {
+    align-items: flex-end !important;
+    padding: 0 !important;
   }
 
   .modal-card {
-    width: 95%;
-    margin: 10px;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 85vh !important;
+    margin: 0 !important;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .modal-body {
+    padding: 16px !important;
+    max-height: 65vh !important;
   }
 
   input[type="text"], input[type="number"], input[type="tel"], input[type="date"], select {
     font-size: 16px !important; /* Prevents iOS auto-zoom */
     min-height: 46px;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   .btn {
@@ -1116,7 +1133,7 @@ input:focus, .select-input:focus {
 
 /* Bottle Inputs Mobile Grid Optimization */
 .bottle-inputs-grid {
-  display: grid;
+  display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 12px;
 }
@@ -1168,11 +1185,23 @@ input:focus, .select-input:focus {
   .table-actions select {
     width: 100%;
   }
+
+  .table-wrapper {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    width: 100%;
+    display: block;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
 }
 
 @media (max-width: 380px) {
   .main-content {
-    padding: 12px 10px 90px 10px;
+    padding: 12px 8px 90px 8px;
   }
 
   .bottle-inputs-grid {
@@ -1191,5 +1220,6 @@ input:focus, .select-input:focus {
     padding: 4px 4px;
   }
 }
+
 
 
