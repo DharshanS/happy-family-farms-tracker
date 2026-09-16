@@ -37,19 +37,19 @@ const SAMPLE_EXPENSES = [
 
 const SAMPLE_RECORDS = [
   { 
-    id: 'rec-2026-09-07', date: '2026-09-07', custType: 'Daily Customer', custName: 'Dharshan & Spot Sales', 
+    id: 'rec-2026-09-07', date: '2026-09-07', custType: 'Daily Customer', custName: 'Dharshan & Spot Sales', paymentStatus: 'Paid',
     cattle_q175: 10, cattle_q475: 20, cattle_q500: 15, cattle_q750: 44, cattle_q1000: 34,
     goat_q175: 4, goat_q475: 6, goat_q500: 5, goat_q750: 10, goat_q1000: 2,
     silage: 0, wage: 600, feed: 460, other: 0, remarks: 'Today total farm record (Cattle & Goat Milk)' 
   },
   { 
-    id: 'rec-2026-09-06', date: '2026-09-06', custType: 'Weekly Customer', custName: 'Green Park Canteen & Sita Lakshmi', 
+    id: 'rec-2026-09-06', date: '2026-09-06', custType: 'Weekly Customer', custName: 'Green Park Canteen & Sita Lakshmi', paymentStatus: 'Pending',
     cattle_q175: 12, cattle_q475: 15, cattle_q500: 10, cattle_q750: 20, cattle_q1000: 10,
     goat_q175: 12, goat_q475: 10, goat_q500: 8, goat_q750: 15, goat_q1000: 5,
     silage: 0, wage: 600, feed: 450, other: 0, remarks: 'Weekend sales spurt' 
   },
   { 
-    id: 'rec-2026-09-05', date: '2026-09-05', custType: 'Time-Being', custName: 'Event & Walk-ins', 
+    id: 'rec-2026-09-05', date: '2026-09-05', custType: 'Time-Being', custName: 'Event & Walk-ins', paymentStatus: 'Paid',
     cattle_q175: 5, cattle_q475: 32, cattle_q500: 10, cattle_q750: 42, cattle_q1000: 30,
     goat_q175: 0, goat_q475: 0, goat_q500: 0, goat_q750: 0, goat_q1000: 0,
     silage: 0, wage: 650, feed: 480, other: 120, remarks: 'Cutter overtime wage' 
@@ -403,6 +403,7 @@ function calculateRecord(rec) {
     ...rec,
     custType: rec.custType || 'Daily Customer',
     custName: rec.custName || '',
+    paymentStatus: rec.paymentStatus || 'Paid',
     cattle_q175: c175, cattle_q475: c475, cattle_q500: c500, cattle_q750: c750, cattle_q1000: c1000,
     goat_q175: g175, goat_q475: g475, goat_q500: g500, goat_q750: g750, goat_q1000: g1000,
     cattleLitres, goatLitres, totalLitres,
@@ -519,6 +520,7 @@ function checkAndLoadDateRecord(selectedDate) {
     document.getElementById('editingRecordId').value = existingRec.id;
     document.getElementById('custType').value = existingRec.custType || 'Daily Customer';
     document.getElementById('custName').value = existingRec.custName || '';
+    if (document.getElementById('paymentStatus')) document.getElementById('paymentStatus').value = existingRec.paymentStatus || 'Paid';
     
     document.getElementById('cattle_q175').value = calc.cattle_q175;
     document.getElementById('cattle_q475').value = calc.cattle_q475;
@@ -684,6 +686,7 @@ function initFormListeners() {
         date: selectedDate,
         custType: custType.value,
         custName: nameVal,
+        paymentStatus: document.getElementById('paymentStatus') ? document.getElementById('paymentStatus').value : 'Paid',
         cattle_q175: Number(document.getElementById('cattle_q175').value || 0),
         cattle_q475: Number(document.getElementById('cattle_q475').value || 0),
         cattle_q500: Number(document.getElementById('cattle_q500').value || 0),
@@ -1002,12 +1005,22 @@ function renderApp() {
   const netProfit = totalRev - totalExp;
   const marginPct = totalRev > 0 ? ((netProfit / totalRev) * 100).toFixed(1) : 0;
 
+  let totalPendingDues = 0;
+  processedRecords.forEach(r => {
+    if (r.paymentStatus === 'Pending' || r.paymentStatus === 'Partial') {
+      totalPendingDues += r.totalRevenue;
+    }
+  });
+
   document.getElementById('statTotalRev').textContent = formatCurrency(totalRev);
   document.getElementById('statTotalLitres').textContent = formatLitres(totalLitres);
   document.getElementById('statBottleBreakdown').textContent = `175ml: ${q175Tot} | 475ml: ${q475Tot} | 500ml: ${q500Tot} | 750ml: ${q750Tot} | 1L: ${q1000Tot}`;
   document.getElementById('statTotalExp').textContent = formatCurrency(totalExp);
   document.getElementById('statNetProfit').textContent = formatCurrency(netProfit);
   document.getElementById('statMarginBadge').textContent = `${marginPct}% Margin`;
+  if (document.getElementById('statPendingDues')) {
+    document.getElementById('statPendingDues').textContent = formatCurrency(totalPendingDues);
+  }
 
   const catCattleRev = document.getElementById('catCattleRev');
   const catCattleLitres = document.getElementById('catCattleLitres');
@@ -1161,6 +1174,9 @@ function renderTable(records) {
       <td>${r.remarks || '-'}</td>
       <td>
         <div class="action-buttons">
+          <button class="btn-action btn-log" onclick="openReceiptModal('${r.id}')" title="Receipt, PDF & WhatsApp">
+            <i class="fa-solid fa-file-invoice"></i> Receipt
+          </button>
           <button class="btn-action btn-view" onclick="viewRecord('${r.id}')" title="View Full Details">
             <i class="fa-solid fa-eye"></i> View
           </button>
@@ -1259,6 +1275,150 @@ function viewRecord(id) {
 
 function closeViewModal() {
   const modal = document.getElementById('viewModal');
+  if (modal) modal.classList.remove('active');
+}
+
+// PDF & WHATSAPP RECEIPT MODAL
+function openReceiptModal(id) {
+  const rec = appState.records.map(calculateRecord).find(r => r.id === id);
+  if (!rec) return;
+
+  const modal = document.getElementById('receiptModal');
+  if (!modal) return;
+
+  let custPhone = 'N/A';
+  const matchedCust = appState.customers.find(c => normalizeStr(c.name) === normalizeStr(rec.custName));
+  if (matchedCust && matchedCust.phone) {
+    custPhone = matchedCust.phone;
+  }
+
+  document.getElementById('rcptDate').textContent = rec.date;
+  document.getElementById('rcptCategory').textContent = rec.custType;
+  document.getElementById('rcptCustName').textContent = rec.custName || 'N/A';
+  document.getElementById('rcptPhone').textContent = custPhone;
+
+  const badgeElem = document.getElementById('rcptPaymentBadge');
+  if (badgeElem) {
+    badgeElem.textContent = rec.paymentStatus || 'Paid';
+    if (rec.paymentStatus === 'Pending') {
+      badgeElem.className = 'badge-cust badge-daily';
+      badgeElem.style.backgroundColor = 'rgba(244, 63, 94, 0.15)';
+      badgeElem.style.color = '#f43f5e';
+      badgeElem.style.borderColor = 'rgba(244, 63, 94, 0.3)';
+    } else if (rec.paymentStatus === 'Partial') {
+      badgeElem.className = 'badge-cust badge-weekly';
+      badgeElem.style.backgroundColor = 'rgba(245, 158, 11, 0.15)';
+      badgeElem.style.color = '#f59e0b';
+      badgeElem.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+    } else {
+      badgeElem.className = 'badge-cust badge-daily';
+      badgeElem.style.backgroundColor = 'rgba(16, 185, 129, 0.15)';
+      badgeElem.style.color = '#10b981';
+      badgeElem.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+    }
+  }
+
+  const rates = appState.rates || DEFAULT_RATES;
+  const cattleRates = rates.cattle || DEFAULT_RATES.cattle;
+  const goatRates = rates.goat || DEFAULT_RATES.goat;
+
+  const tbody = document.getElementById('rcptTableBody');
+  tbody.innerHTML = '';
+
+  const items = [
+    { type: 'Cattle Milk', size: '175ml', qty: rec.cattle_q175, price: cattleRates.rate175 },
+    { type: 'Cattle Milk', size: '475ml', qty: rec.cattle_q475, price: cattleRates.rate475 },
+    { type: 'Cattle Milk', size: '500ml', qty: rec.cattle_q500, price: cattleRates.rate500 },
+    { type: 'Cattle Milk', size: '750ml', qty: rec.cattle_q750, price: cattleRates.rate750 },
+    { type: 'Cattle Milk', size: '1000ml (1L)', qty: rec.cattle_q1000, price: cattleRates.rate1000 },
+    { type: 'Goat Milk', size: '175ml', qty: rec.goat_q175, price: goatRates.rate175 },
+    { type: 'Goat Milk', size: '475ml', qty: rec.goat_q475, price: goatRates.rate475 },
+    { type: 'Goat Milk', size: '500ml', qty: rec.goat_q500, price: goatRates.rate500 },
+    { type: 'Goat Milk', size: '750ml', qty: rec.goat_q750, price: goatRates.rate750 },
+    { type: 'Goat Milk', size: '1000ml (1L)', qty: rec.goat_q1000, price: goatRates.rate1000 }
+  ];
+
+  let lineCount = 0;
+  items.forEach(item => {
+    if (item.qty > 0) {
+      lineCount++;
+      const amt = item.qty * item.price;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${item.type}</strong> (${item.size})</td>
+        <td>${item.qty}</td>
+        <td>${formatCurrency(item.price)}</td>
+        <td><strong>${formatCurrency(amt)}</strong></td>
+      `;
+      tbody.appendChild(tr);
+    }
+  });
+
+  if (lineCount === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #64748b;">No bottle quantities logged.</td></tr>`;
+  }
+
+  document.getElementById('rcptTotalVolume').textContent = formatLitres(rec.totalLitres);
+  document.getElementById('rcptGrandTotal').textContent = formatCurrency(rec.totalRevenue);
+
+  const btnPdf = document.getElementById('btnDownloadPDF');
+  if (btnPdf) {
+    btnPdf.onclick = () => {
+      const element = document.getElementById('printableReceiptArea');
+      const opt = {
+        margin:       [10, 10, 10, 10],
+        filename:     `Happy_Family_Farms_Receipt_${rec.date}_${(rec.custName || 'Customer').replace(/\s+/g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      if (window.html2pdf) {
+        html2pdf().set(opt).from(element).save();
+      } else {
+        window.print();
+      }
+    };
+  }
+
+  const btnWa = document.getElementById('btnShareWhatsApp');
+  if (btnWa) {
+    btnWa.onclick = () => {
+      let waMsg = `🐄 *HAPPY FAMILY FARMS* 🐐\n`;
+      waMsg += `*Dairy Billing Receipt*\n`;
+      waMsg += `------------------------------------\n`;
+      waMsg += `📅 Date: ${rec.date}\n`;
+      waMsg += `👤 Customer: ${rec.custName || 'N/A'}\n`;
+      waMsg += `🏷️ Category: ${rec.custType}\n`;
+      waMsg += `💳 Payment Status: ${rec.paymentStatus || 'Paid'}\n`;
+      waMsg += `------------------------------------\n`;
+      waMsg += `*Order Items:*\n`;
+
+      items.forEach(item => {
+        if (item.qty > 0) {
+          waMsg += `• ${item.type} (${item.size}): ${item.qty} pcs @ Rs. ${item.price.toFixed(2)} = Rs. ${(item.qty * item.price).toFixed(2)}\n`;
+        }
+      });
+
+      waMsg += `------------------------------------\n`;
+      waMsg += `🥛 Total Milk Volume: *${rec.totalLitres.toFixed(2)} Litres*\n`;
+      waMsg += `💰 Grand Total Amount: *Rs. ${rec.totalRevenue.toFixed(2)}*\n`;
+      waMsg += `------------------------------------\n`;
+      waMsg += `Thank you for choosing Happy Family Farms! 🥛🌱`;
+
+      let cleanPhone = custPhone !== 'N/A' ? custPhone.replace(/\D/g, '') : '';
+      if (cleanPhone.length === 10) cleanPhone = '94' + cleanPhone;
+      const url = cleanPhone 
+        ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(waMsg)}` 
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(waMsg)}`;
+      window.open(url, '_blank');
+    };
+  }
+
+  modal.classList.add('active');
+}
+
+function closeReceiptModal() {
+  const modal = document.getElementById('receiptModal');
   if (modal) modal.classList.remove('active');
 }
 

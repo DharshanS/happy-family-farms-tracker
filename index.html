@@ -20,8 +20,10 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- SheetJS xlsx CDN -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- html2pdf.js CDN for PDF Billing Receipts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐄</text></svg>">
-  <link rel="stylesheet" href="styles.css?v=7.0">
+  <link rel="stylesheet" href="styles.css?v=8.0">
 </head>
 <body>
   <!-- Mobile Sidebar Overlay -->
@@ -146,6 +148,15 @@
               <span class="label">Net Profit</span>
               <h3 id="statNetProfit">Rs. 0.00</h3>
               <span class="badge" id="statMarginBadge">0% Margin</span>
+            </div>
+          </div>
+
+          <div class="metric-card dues-card" style="border-left: 4px solid var(--amber-accent);">
+            <div class="card-icon" style="background-color: rgba(245, 158, 11, 0.15); color: var(--amber-accent);"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <div class="card-info">
+              <span class="label">Unpaid / Pending Dues</span>
+              <h3 id="statPendingDues" style="color: var(--amber-accent);">Rs. 0.00</h3>
+              <span class="trend" style="color: var(--amber-accent);"><i class="fa-solid fa-triangle-exclamation"></i> Customer Accounts</span>
             </div>
           </div>
         </div>
@@ -513,9 +524,20 @@
                 </div>
               </div>
 
-              <div class="form-group full-width" style="margin-top: 12px;">
-                <label for="custName">Customer / Route Name</label>
-                <input type="text" id="custName" placeholder="e.g. Route 1 & Spot Sales" required>
+              <div class="form-row" style="margin-top: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="form-group">
+                  <label for="custName">Customer / Route Name</label>
+                  <input type="text" id="custName" placeholder="e.g. Route 1 & Spot Sales" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="paymentStatus">Payment Status</label>
+                  <select id="paymentStatus" class="select-input" required>
+                    <option value="Paid">✅ Paid (Full Cash / Online)</option>
+                    <option value="Pending">⚠️ Pending (Unpaid Dues)</option>
+                    <option value="Partial">⏳ Partial Payment</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -770,6 +792,91 @@
     </div>
   </div>
 
+  <!-- PDF & WHATSAPP RECEIPT MODAL -->
+  <div id="receiptModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-file-invoice-dollar"></i> Customer Receipt & Billing</h3>
+        <button class="modal-close" onclick="closeReceiptModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Printable Invoice Container -->
+        <div id="printableReceiptArea" class="receipt-container">
+          <div class="receipt-header">
+            <div class="receipt-logo"><i class="fa-solid fa-cow"></i></div>
+            <h2>Happy Family Farms</h2>
+            <p class="receipt-sub">Dairy Management & Fresh Milk Delivery</p>
+            <span class="receipt-badge" id="rcptBadge">RECEIPT</span>
+          </div>
+
+          <div class="receipt-info-grid">
+            <div>
+              <span class="lbl">Receipt Date</span>
+              <strong id="rcptDate">-</strong>
+            </div>
+            <div>
+              <span class="lbl">Customer Category</span>
+              <strong id="rcptCategory">-</strong>
+            </div>
+            <div>
+              <span class="lbl">Customer / Route Name</span>
+              <strong id="rcptCustName">-</strong>
+            </div>
+            <div>
+              <span class="lbl">Mobile Number</span>
+              <strong id="rcptPhone">-</strong>
+            </div>
+          </div>
+
+          <div class="receipt-items-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Milk Type & Size</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody id="rcptTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="receipt-totals">
+            <div class="rcpt-row">
+              <span>Total Volume (Litres):</span>
+              <strong id="rcptTotalVolume">0.00 L</strong>
+            </div>
+            <div class="rcpt-row grand-total">
+              <span>Grand Total Amount:</span>
+              <strong id="rcptGrandTotal">Rs. 0.00</strong>
+            </div>
+            <div class="rcpt-row">
+              <span>Payment Status:</span>
+              <span id="rcptPaymentBadge" class="badge badge-daily">Paid</span>
+            </div>
+          </div>
+
+          <div class="receipt-footer-note">
+            <p>Thank you for choosing Happy Family Farms! 🐄🐐</p>
+            <small>Pure Cattle & Goat Milk Delivery</small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="flex-wrap: wrap; justify-content: space-between; gap: 8px;">
+        <button class="btn btn-emerald" id="btnShareWhatsApp">
+          <i class="fa-brands fa-whatsapp"></i> Share WhatsApp
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-primary" id="btnDownloadPDF">
+            <i class="fa-solid fa-file-pdf"></i> Download PDF
+          </button>
+          <button class="btn btn-secondary" onclick="closeReceiptModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Mobile Bottom Navigation Bar -->
   <nav class="mobile-bottom-nav">
     <a href="#dashboard" class="mobile-nav-item active" data-tab="dashboard">
@@ -798,6 +905,6 @@
     </a>
   </nav>
 
-  <script src="app.js?v=7.0"></script>
+  <script src="app.js?v=8.0"></script>
 </body>
 </html>
