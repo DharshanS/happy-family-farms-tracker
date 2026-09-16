@@ -37,19 +37,19 @@ const SAMPLE_EXPENSES = [
 
 const SAMPLE_RECORDS = [
   { 
-    id: 'rec-2026-09-07', date: '2026-09-07', custType: 'Daily Customer', custName: 'Dharshan & Spot Sales', paymentStatus: 'Paid',
+    id: 'rec-2026-09-07', date: '2026-09-07', custType: 'Daily Customer', custName: 'Dharshan & Spot Sales', paymentStatus: 'Paid', amountPaid: 5790.00,
     cattle_q175: 10, cattle_q475: 20, cattle_q500: 15, cattle_q750: 44, cattle_q1000: 34,
     goat_q175: 4, goat_q475: 6, goat_q500: 5, goat_q750: 10, goat_q1000: 2,
     silage: 0, wage: 600, feed: 460, other: 0, remarks: 'Today total farm record (Cattle & Goat Milk)' 
   },
   { 
-    id: 'rec-2026-09-06', date: '2026-09-06', custType: 'Weekly Customer', custName: 'Green Park Canteen & Sita Lakshmi', paymentStatus: 'Pending',
+    id: 'rec-2026-09-06', date: '2026-09-06', custType: 'Weekly Customer', custName: 'Green Park Canteen & Sita Lakshmi', paymentStatus: 'Partial', amountPaid: 1500.00,
     cattle_q175: 12, cattle_q475: 15, cattle_q500: 10, cattle_q750: 20, cattle_q1000: 10,
     goat_q175: 12, goat_q475: 10, goat_q500: 8, goat_q750: 15, goat_q1000: 5,
-    silage: 0, wage: 600, feed: 450, other: 0, remarks: 'Weekend sales spurt' 
+    silage: 0, wage: 600, feed: 450, other: 0, remarks: 'Partial cash payment received (Rs. 1500 paid, balance pending)' 
   },
   { 
-    id: 'rec-2026-09-05', date: '2026-09-05', custType: 'Time-Being', custName: 'Event & Walk-ins', paymentStatus: 'Paid',
+    id: 'rec-2026-09-05', date: '2026-09-05', custType: 'Time-Being', custName: 'Event & Walk-ins', paymentStatus: 'Paid', amountPaid: 3500.00,
     cattle_q175: 5, cattle_q475: 32, cattle_q500: 10, cattle_q750: 42, cattle_q1000: 30,
     goat_q175: 0, goat_q475: 0, goat_q500: 0, goat_q750: 0, goat_q1000: 0,
     silage: 0, wage: 650, feed: 480, other: 120, remarks: 'Cutter overtime wage' 
@@ -399,11 +399,24 @@ function calculateRecord(rec) {
   const totalExpenses = silage + wage + feed + other;
   const netProfit = totalRevenue - totalExpenses;
 
+  const paymentStatus = rec.paymentStatus || 'Paid';
+  let amountPaid = 0;
+  if (paymentStatus === 'Paid') {
+    amountPaid = totalRevenue;
+  } else if (paymentStatus === 'Pending') {
+    amountPaid = 0;
+  } else {
+    amountPaid = Number(rec.amountPaid || 0);
+  }
+  const dueBalance = Math.max(0, totalRevenue - amountPaid);
+
   return {
     ...rec,
     custType: rec.custType || 'Daily Customer',
     custName: rec.custName || '',
-    paymentStatus: rec.paymentStatus || 'Paid',
+    paymentStatus,
+    amountPaid,
+    dueBalance,
     cattle_q175: c175, cattle_q475: c475, cattle_q500: c500, cattle_q750: c750, cattle_q1000: c1000,
     goat_q175: g175, goat_q475: g475, goat_q500: g500, goat_q750: g750, goat_q1000: g1000,
     cattleLitres, goatLitres, totalLitres,
@@ -520,7 +533,16 @@ function checkAndLoadDateRecord(selectedDate) {
     document.getElementById('editingRecordId').value = existingRec.id;
     document.getElementById('custType').value = existingRec.custType || 'Daily Customer';
     document.getElementById('custName').value = existingRec.custName || '';
-    if (document.getElementById('paymentStatus')) document.getElementById('paymentStatus').value = existingRec.paymentStatus || 'Paid';
+    if (document.getElementById('paymentStatus')) {
+      document.getElementById('paymentStatus').value = existingRec.paymentStatus || 'Paid';
+    }
+    if (document.getElementById('amountPaid')) {
+      document.getElementById('amountPaid').value = existingRec.amountPaid || 0;
+    }
+    const amtGroup = document.getElementById('amountPaidGroup');
+    if (amtGroup) {
+      amtGroup.style.display = (existingRec.paymentStatus === 'Partial') ? 'flex' : 'none';
+    }
     
     document.getElementById('cattle_q175').value = calc.cattle_q175;
     document.getElementById('cattle_q475').value = calc.cattle_q475;
@@ -624,6 +646,23 @@ function updateLiveCalc() {
 
   if (document.getElementById('liveLitres')) document.getElementById('liveLitres').textContent = formatLitres(totL);
   if (document.getElementById('liveRevenue')) document.getElementById('liveRevenue').textContent = formatCurrency(totR);
+
+  const pStatus = document.getElementById('paymentStatus')?.value || 'Paid';
+  const amtGroup = document.getElementById('amountPaidGroup');
+  const dueNotice = document.getElementById('dueBalanceNotice');
+  const amtPaidInput = document.getElementById('amountPaid');
+
+  if (amtGroup) {
+    if (pStatus === 'Partial') {
+      amtGroup.style.display = 'flex';
+      const paid = Number(amtPaidInput?.value || 0);
+      const due = Math.max(0, totR - paid);
+      if (dueNotice) dueNotice.textContent = `⚠️ Remaining Balance Due: ${formatCurrency(due)}`;
+    } else {
+      amtGroup.style.display = 'none';
+      if (dueNotice) dueNotice.textContent = '';
+    }
+  }
 }
 
 // Form Listeners for Daily Transaction Entry
@@ -632,11 +671,20 @@ function initFormListeners() {
   const custSelect = document.getElementById('selectRegisteredCustomer');
   const custType = document.getElementById('custType');
   const custName = document.getElementById('custName');
+  const paymentStatus = document.getElementById('paymentStatus');
+  const amountPaid = document.getElementById('amountPaid');
 
   if (entryDate) {
     entryDate.addEventListener('change', (e) => {
       checkAndLoadDateRecord(e.target.value);
     });
+  }
+
+  if (paymentStatus) {
+    paymentStatus.addEventListener('change', updateLiveCalc);
+  }
+  if (amountPaid) {
+    amountPaid.addEventListener('input', updateLiveCalc);
   }
 
   ['cattle_q175','cattle_q475','cattle_q500','cattle_q750','cattle_q1000',
@@ -679,14 +727,16 @@ function initFormListeners() {
       e.preventDefault();
 
       const selectedDate = entryDate.value;
-      const nameVal = custName.value.trim() || 'Daily Farm Operations';
+      const pStatus = document.getElementById('paymentStatus') ? document.getElementById('paymentStatus').value : 'Paid';
+      const amtPaidVal = Number(document.getElementById('amountPaid')?.value || 0);
 
       const recordData = {
         id: 'rec-' + selectedDate,
         date: selectedDate,
         custType: custType.value,
         custName: nameVal,
-        paymentStatus: document.getElementById('paymentStatus') ? document.getElementById('paymentStatus').value : 'Paid',
+        paymentStatus: pStatus,
+        amountPaid: amtPaidVal,
         cattle_q175: Number(document.getElementById('cattle_q175').value || 0),
         cattle_q475: Number(document.getElementById('cattle_q475').value || 0),
         cattle_q500: Number(document.getElementById('cattle_q500').value || 0),
@@ -1007,9 +1057,7 @@ function renderApp() {
 
   let totalPendingDues = 0;
   processedRecords.forEach(r => {
-    if (r.paymentStatus === 'Pending' || r.paymentStatus === 'Partial') {
-      totalPendingDues += r.totalRevenue;
-    }
+    totalPendingDues += (r.dueBalance || 0);
   });
 
   document.getElementById('statTotalRev').textContent = formatCurrency(totalRev);
@@ -1137,6 +1185,17 @@ function deleteCustomer(id) {
   }
 }
 
+function getPaymentStatusBadge(r) {
+  const status = r.paymentStatus || 'Paid';
+  if (status === 'Pending') {
+    return `<span class="badge-cust badge-daily" style="background-color: rgba(244, 63, 94, 0.15); color: #f43f5e; border-color: rgba(244, 63, 94, 0.3); font-size: 11px;"><i class="fa-solid fa-circle-xmark"></i> Pending (${formatCurrency(r.dueBalance)})</span>`;
+  }
+  if (status === 'Partial') {
+    return `<span class="badge-cust badge-weekly" style="background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); font-size: 11px;"><i class="fa-solid fa-clock"></i> Partial (Paid: ${formatCurrency(r.amountPaid)} | Due: ${formatCurrency(r.dueBalance)})</span>`;
+  }
+  return `<span class="badge-cust badge-daily" style="background-color: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3); font-size: 11px;"><i class="fa-solid fa-circle-check"></i> Paid</span>`;
+}
+
 // Render Log Records Table
 function renderTable(records) {
   const tbody = document.getElementById('tableBody');
@@ -1160,7 +1219,7 @@ function renderTable(records) {
     tr.innerHTML = `
       <td><strong>${r.date}</strong></td>
       <td>${getCustBadge(r.custType)}</td>
-      <td>${r.custName || '-'}</td>
+      <td><strong>${r.custName || '-'}</strong><br>${getPaymentStatusBadge(r)}</td>
       <td style="font-size: 11px; color: var(--teal-accent);">${cattleSummary}</td>
       <td style="font-size: 11px; color: var(--indigo-accent);">${goatSummary}</td>
       <td><strong>${formatLitres(r.totalLitres)}</strong></td>
@@ -1361,6 +1420,29 @@ function openReceiptModal(id) {
   document.getElementById('rcptTotalVolume').textContent = formatLitres(rec.totalLitres);
   document.getElementById('rcptGrandTotal').textContent = formatCurrency(rec.totalRevenue);
 
+  const paidRow = document.getElementById('rcptPaidRow');
+  const dueRow = document.getElementById('rcptDueRow');
+
+  if (rec.paymentStatus === 'Partial') {
+    if (paidRow) {
+      paidRow.style.display = 'flex';
+      document.getElementById('rcptAmountPaid').textContent = formatCurrency(rec.amountPaid);
+    }
+    if (dueRow) {
+      dueRow.style.display = 'flex';
+      document.getElementById('rcptRemainingDue').textContent = formatCurrency(rec.dueBalance);
+    }
+  } else if (rec.paymentStatus === 'Pending') {
+    if (paidRow) paidRow.style.display = 'none';
+    if (dueRow) {
+      dueRow.style.display = 'flex';
+      document.getElementById('rcptRemainingDue').textContent = formatCurrency(rec.dueBalance);
+    }
+  } else {
+    if (paidRow) paidRow.style.display = 'none';
+    if (dueRow) dueRow.style.display = 'none';
+  }
+
   const btnPdf = document.getElementById('btnDownloadPDF');
   if (btnPdf) {
     btnPdf.onclick = () => {
@@ -1402,6 +1484,14 @@ function openReceiptModal(id) {
       waMsg += `------------------------------------\n`;
       waMsg += `🥛 Total Milk Volume: *${rec.totalLitres.toFixed(2)} Litres*\n`;
       waMsg += `💰 Grand Total Amount: *Rs. ${rec.totalRevenue.toFixed(2)}*\n`;
+      if (rec.paymentStatus === 'Partial') {
+        waMsg += `✅ Amount Paid: *Rs. ${rec.amountPaid.toFixed(2)}*\n`;
+        waMsg += `⚠️ Remaining Balance Due: *Rs. ${rec.dueBalance.toFixed(2)}*\n`;
+      } else if (rec.paymentStatus === 'Pending') {
+        waMsg += `⚠️ Outstanding Balance Due: *Rs. ${rec.dueBalance.toFixed(2)}*\n`;
+      } else {
+        waMsg += `✅ Paid in Full\n`;
+      }
       waMsg += `------------------------------------\n`;
       waMsg += `Thank you for choosing Happy Family Farms! 🥛🌱`;
 
