@@ -277,11 +277,12 @@
       <section id="tab-customers" class="tab-content">
         <div class="form-container" style="margin-bottom: 32px;">
           <div class="form-header">
-            <h2><i class="fa-solid fa-user-plus"></i> Customer Registration Master</h2>
+            <h2 id="custFormTitle"><i class="fa-solid fa-user-plus"></i> Customer Registration Master</h2>
             <p>Register new customers (Daily, Weekly, Monthly, Time-Being) with default orders for Cattle Milk, Goat Milk, or Both!</p>
           </div>
 
           <form id="customerForm" class="grid-form">
+            <input type="hidden" id="editingCustId" value="">
             <div class="form-section customer-section">
               <h3 class="section-title text-amber"><i class="fa-solid fa-id-card"></i> Customer Personal Details</h3>
               <div class="form-row">
@@ -377,7 +378,7 @@
             </div>
 
             <div class="form-actions">
-              <button type="submit" class="btn btn-amber btn-lg">
+              <button type="submit" id="btnSubmitCustForm" class="btn btn-amber btn-lg">
                 <i class="fa-solid fa-floppy-disk"></i> Save & Register Customer
               </button>
               <button type="button" id="btnResetCustForm" class="btn btn-secondary btn-lg">Reset</button>

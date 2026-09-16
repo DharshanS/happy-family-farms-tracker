@@ -629,6 +629,7 @@ function initCustomerRegistrationForm() {
   custForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
+    const editingId = document.getElementById('editingCustId')?.value || '';
     const nameInput = document.getElementById('regCustName').value.trim();
     const phoneRaw = document.getElementById('regPhone').value.trim();
     const phoneCheck = validatePhoneNumber(phoneRaw);
@@ -641,6 +642,51 @@ function initCustomerRegistrationForm() {
 
     const phoneInput = phoneCheck.cleaned;
     const normName = normalizeStr(nameInput);
+
+    if (editingId) {
+      const custIdx = appState.customers.findIndex(c => c.id === editingId);
+      if (custIdx !== -1) {
+        const dupName = appState.customers.find(c => c.id !== editingId && normalizeStr(c.name) === normName);
+        if (dupName) {
+          alert(`⛔ UPDATE BLOCKED:\n\nCustomer name "${dupName.name}" is already registered under another account (${dupName.id}).`);
+          return;
+        }
+
+        if (phoneInput !== 'N/A' && phoneInput.length > 3) {
+          const dupPhone = appState.customers.find(c => c.id !== editingId && c.phone !== 'N/A' && c.phone === phoneInput);
+          if (dupPhone) {
+            alert(`⛔ UPDATE BLOCKED:\n\nPhone number "${phoneInput}" is already registered under customer "${dupPhone.name}" (${dupPhone.id}).`);
+            if (regPhoneInput) regPhoneInput.focus();
+            return;
+          }
+        }
+
+        appState.customers[custIdx] = {
+          ...appState.customers[custIdx],
+          name: nameInput,
+          type: document.getElementById('regCustType').value,
+          milkType: document.getElementById('regMilkType').value,
+          phone: phoneInput,
+          address: document.getElementById('regAddress').value.trim() || 'N/A',
+          regCattle175: Number(document.getElementById('regCattle175').value || 0),
+          regCattle475: Number(document.getElementById('regCattle475').value || 0),
+          regCattle500: Number(document.getElementById('regCattle500').value || 0),
+          regCattle750: Number(document.getElementById('regCattle750').value || 0),
+          regCattle1000: Number(document.getElementById('regCattle1000').value || 0),
+          regGoat175: Number(document.getElementById('regGoat175').value || 0),
+          regGoat475: Number(document.getElementById('regGoat475').value || 0),
+          regGoat500: Number(document.getElementById('regGoat500').value || 0),
+          regGoat750: Number(document.getElementById('regGoat750').value || 0),
+          regGoat1000: Number(document.getElementById('regGoat1000').value || 0)
+        };
+
+        saveState();
+        resetCustomerForm();
+        renderApp();
+        alert(`✅ Customer "${nameInput}" (${editingId}) Updated Successfully!`);
+        return;
+      }
+    }
 
     const existingName = appState.customers.find(c => normalizeStr(c.name) === normName);
     if (existingName) {
@@ -679,20 +725,68 @@ function initCustomerRegistrationForm() {
 
     appState.customers.unshift(newCust);
     saveState();
+    resetCustomerForm();
     renderApp();
 
-    custForm.reset();
-    if (phoneNotice) phoneNotice.textContent = '';
     alert(`✅ Customer "${newCust.name}" (${newCust.milkType}) Registered Successfully! Phone: ${newCust.phone}`);
   });
 
   const btnResetCust = document.getElementById('btnResetCustForm');
   if (btnResetCust) {
     btnResetCust.addEventListener('click', () => {
-      custForm.reset();
-      if (phoneNotice) phoneNotice.textContent = '';
+      resetCustomerForm();
     });
   }
+}
+
+function resetCustomerForm() {
+  const custForm = document.getElementById('customerForm');
+  if (!custForm) return;
+  if (document.getElementById('editingCustId')) document.getElementById('editingCustId').value = '';
+  custForm.reset();
+
+  const phoneNotice = document.getElementById('phoneValidationNotice');
+  if (phoneNotice) phoneNotice.textContent = '';
+
+  const titleElem = document.getElementById('custFormTitle');
+  if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-user-plus"></i> Customer Registration Master`;
+
+  const btnSubmit = document.getElementById('btnSubmitCustForm');
+  if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Save & Register Customer`;
+}
+
+function editCustomer(id) {
+  const c = appState.customers.find(cust => cust.id === id);
+  if (!c) return;
+
+  if (document.getElementById('editingCustId')) document.getElementById('editingCustId').value = c.id;
+  document.getElementById('regCustName').value = c.name;
+  document.getElementById('regCustType').value = c.type;
+  document.getElementById('regMilkType').value = c.milkType || 'Both (Cattle & Goat)';
+  document.getElementById('regPhone').value = c.phone === 'N/A' ? '' : c.phone;
+  document.getElementById('regAddress').value = c.address === 'N/A' ? '' : c.address;
+
+  document.getElementById('regCattle175').value = c.regCattle175 || 0;
+  document.getElementById('regCattle475').value = c.regCattle475 || 0;
+  document.getElementById('regCattle500').value = c.regCattle500 || 0;
+  document.getElementById('regCattle750').value = c.regCattle750 || 0;
+  document.getElementById('regCattle1000').value = c.regCattle1000 || 0;
+
+  document.getElementById('regGoat175').value = c.regGoat175 || 0;
+  document.getElementById('regGoat475').value = c.regGoat475 || 0;
+  document.getElementById('regGoat500').value = c.regGoat500 || 0;
+  document.getElementById('regGoat750').value = c.regGoat750 || 0;
+  document.getElementById('regGoat1000').value = c.regGoat1000 || 0;
+
+  const titleElem = document.getElementById('custFormTitle');
+  if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: var(--amber-accent);"></i> Edit Customer Details (${c.id})`;
+
+  const btnSubmit = document.getElementById('btnSubmitCustForm');
+  if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Update Customer Details`;
+
+  const custTab = document.querySelector('[data-tab="customers"]');
+  if (custTab) custTab.click();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // 📅 Check if a record exists for a date. Auto-load for Editing if found!
@@ -1332,6 +1426,9 @@ function renderCustomerDirectory(processedRecords) {
         <div class="action-buttons">
           <button class="btn-action btn-log" onclick="selectCustForLog('${c.id}')" title="Log Daily Entry">
             <i class="fa-solid fa-cart-plus"></i> Log
+          </button>
+          <button class="btn-action btn-edit" onclick="editCustomer('${c.id}')" title="Edit Customer Details">
+            <i class="fa-solid fa-pen-to-square"></i> Edit
           </button>
           <button class="btn-action btn-delete" onclick="deleteCustomer('${c.id}')" title="Delete Customer">
             <i class="fa-solid fa-trash-can"></i> Delete
