@@ -89,7 +89,7 @@
       </div>
 
       <div class="sidebar-footer">
-        <p><i class="fa-solid fa-shield-halved"></i> Cattle & Goat Milk Active</p>
+        <p><i class="fa-solid fa-shield-halved"></i> Cow & Goat Milk Active</p>
         <div class="sidebar-user-info" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; flex-direction: column;">
             <span id="sidebarUserName" style="font-size: 12px; font-weight: 700; color: var(--text-main);">Guest User</span>
@@ -108,7 +108,7 @@
       <header class="top-header">
         <div class="header-title">
           <h1 id="pageTitle">Happy Family Farms - Overview & Summary</h1>
-          <p class="subtitle">Track Cattle Milk & Goat Milk revenue (175ml, 475ml, 500ml, 750ml, 1000ml) and daily operating expenses.</p>
+          <p class="subtitle">Track Cow Milk & Goat Milk revenue (175ml, 475ml, 500ml, 750ml, 1000ml) and daily operating expenses.</p>
         </div>
         <div class="header-actions">
           <div id="userSessionBadge" class="user-session-pill" style="display: flex; align-items: center; gap: 8px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-color); padding: 4px 12px; border-radius: 20px;">
@@ -191,7 +191,7 @@
         </div>
         <div class="category-summary-grid">
           <div class="cat-pill pill-teal">
-            <span class="cat-title"><i class="fa-solid fa-cow"></i> Cattle Milk</span>
+            <span class="cat-title"><i class="fa-solid fa-cow"></i> Cow Milk</span>
             <strong id="catCattleRev">Rs. 0.00</strong>
             <small id="catCattleLitres">0.00 L</small>
           </div>
@@ -278,7 +278,7 @@
         <div class="form-container" style="margin-bottom: 32px;">
           <div class="form-header">
             <h2 id="custFormTitle"><i class="fa-solid fa-user-plus"></i> Customer Registration Master</h2>
-            <p>Register new customers (Daily, Weekly, Monthly, Time-Being) with default orders for Cattle Milk, Goat Milk, or Both!</p>
+            <p>Register new customers (Daily, Weekly, Monthly, Time-Being) with default orders for Cow Milk, Goat Milk, or Both!</p>
           </div>
 
           <form id="customerForm" class="grid-form">
@@ -304,8 +304,8 @@
                 <div class="form-group">
                   <label for="regMilkType">Milk Preference</label>
                   <select id="regMilkType" class="select-input" required>
-                    <option value="Both (Cattle & Goat)">Both (Cattle & Goat Milk)</option>
-                    <option value="Cattle Milk Only">Cattle Milk Only</option>
+                    <option value="Both (Cow & Goat)">Both (Cow & Goat Milk)</option>
+                    <option value="Cow Milk Only">Cow Milk Only</option>
                     <option value="Goat Milk Only">Goat Milk Only</option>
                   </select>
                 </div>
@@ -323,9 +323,9 @@
               </div>
             </div>
 
-            <!-- Cattle Milk Default Preference -->
-            <div class="form-section revenue-section">
-              <h3 class="section-title text-teal"><i class="fa-solid fa-cow"></i> Default Cattle Milk Bottle Preferences</h3>
+            <!-- Cow Milk Default Preference -->
+            <div class="card glass-card" style="margin-bottom: 24px;">
+              <h3 class="section-title text-teal"><i class="fa-solid fa-cow"></i> Default Cow Milk Bottle Preferences</h3>
               <div class="form-row bottle-inputs-grid">
                 <div class="form-group">
                   <label for="regCattle175">175ml Qty</label>
@@ -401,7 +401,7 @@
                   <th>Category</th>
                   <th>Phone Number</th>
                   <th>Delivery Address / Route</th>
-                  <th>Cattle Defaults (175/475/500/750/1L)</th>
+                  <th>Cow Defaults (175/475/500/750/1L)</th>
                   <th>Goat Defaults (175/475/500/750/1L)</th>
                   <th>Total Litres</th>
                   <th>Total Revenue</th>
@@ -419,7 +419,7 @@
         <div class="form-container" style="margin-bottom: 32px;">
           <div class="form-header">
             <h2 id="expFormTitle"><i class="fa-solid fa-receipt"></i> Log Separate Farm Expense</h2>
-            <p>Log silage purchases, grass cutter wages, cattle feed/punnaku, or medicine expenses independently by date.</p>
+            <p>Log silage purchases, grass cutter wages, cow feed/punnaku, or medicine expenses independently by date.</p>
           </div>
 
           <form id="standaloneExpenseForm" class="grid-form">
@@ -438,7 +438,7 @@
                   <select id="expCategory" class="select-input" required>
                     <option value="Silage">Silage (Fodder / Crops)</option>
                     <option value="Grass Cutter Wage">Grass Cutter Wage (Labor)</option>
-                    <option value="Feed / Punnaku">Feed / Punnaku (Cattle Oil Cake)</option>
+                    <option value="Feed / Punnaku">Feed / Punnaku (Cow Oil Cake)</option>
                     <option value="Veterinary / Medicine">Veterinary / Medicine</option>
                     <option value="Electricity / Utility">Electricity / Utility</option>
                     <option value="Other Expense">Other Expense</option>
@@ -514,7 +514,7 @@
         <div class="form-container">
           <div class="form-header">
             <h2 id="entryFormTitle"><i class="fa-solid fa-pen-to-square"></i> Record Farm Transaction</h2>
-            <p>Customers can buy Cattle Milk, Goat Milk, or BOTH in the same daily entry!</p>
+            <p>Customers can buy Cow Milk, Goat Milk, or BOTH in the same daily entry!</p>
           </div>
 
           <!-- Date Status Banner -->
@@ -572,9 +572,9 @@
               </div>
             </div>
 
-            <!-- 🐮 Cattle Milk Bottle Sales Section -->
-            <div class="form-section revenue-section">
-              <h3 class="section-title text-teal"><i class="fa-solid fa-cow"></i> 1. Cattle Milk Bottle Sales</h3>
+            <!-- 🐮 Cow Milk Bottle Sales Section -->
+            <div class="card glass-card" style="margin-bottom: 24px;">
+              <h3 class="section-title text-teal"><i class="fa-solid fa-cow"></i> 1. Cow Milk Bottle Sales</h3>
               <div class="form-row bottle-inputs-grid">
                 <div class="form-group">
                   <label for="cattle_q175">175ml Qty</label>
@@ -639,7 +639,7 @@
             <!-- Live Calculation Preview -->
             <div class="calc-preview" style="flex-direction: column; gap: 8px;">
               <div style="display: flex; justify-content: space-between;">
-                <span>🐮 Cattle Milk: <span id="liveCattleLitres" style="color: var(--teal-accent);">0.00 L</span> (<span id="liveCattleRev">Rs. 0.00</span>)</span>
+                <span>🐮 Cow Milk: <span id="liveCattleLitres" style="color: var(--teal-accent);">0.00 L</span> (<span id="liveCattleRev">Rs. 0.00</span>)</span>
                 <span>🐐 Goat Milk: <span id="liveGoatLitres" style="color: var(--indigo-accent);">0.00 L</span> (<span id="liveGoatRev">Rs. 0.00</span>)</span>
               </div>
               <div style="display: flex; justify-content: space-between; border-top: 1px dashed var(--border-color); padding-top: 6px; font-weight: 700; font-size: 15px;">
@@ -714,7 +714,7 @@
                   <th>Date</th>
                   <th>Customer Category</th>
                   <th>Customer / Note</th>
-                  <th>Cattle Bottles (175/475/500/750/1L)</th>
+                  <th>Cow Bottles (175/475/500/750/1L)</th>
                   <th>Goat Bottles (175/475/500/750/1L)</th>
                   <th>Total Litres</th>
                   <th>Total Revenue</th>
@@ -739,13 +739,13 @@
         <div class="form-container">
           <div class="form-header">
             <h2><i class="fa-solid fa-sliders"></i> Master Pricing & Rate Configuration</h2>
-            <p>Set separate selling prices per bottle size for Cattle Milk and Goat Milk across 175ml, 475ml, 500ml, 750ml, and 1000ml.</p>
+            <p>Set separate selling prices per bottle size for Cow Milk and Goat Milk across 175ml, 475ml, 500ml, 750ml, and 1000ml.</p>
           </div>
 
           <form id="settingsForm" class="grid-form">
-            <!-- Cattle Milk Selling Prices -->
-            <div class="form-section">
-              <h3 class="section-title text-teal"><i class="fa-solid fa-cow"></i> Cattle Milk Selling Prices (Rs.)</h3>
+            <!-- Cow Milk Selling Prices -->
+            <div class="card glass-card" style="margin-bottom: 24px;">
+              <h3 class="section-title text-teal"><i class="fa-solid fa-cow"></i> Cow Milk Selling Prices (Rs.)</h3>
               <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
                 <div class="form-group">
                   <label for="settingCattle175">175ml Price (Rs.)</label>

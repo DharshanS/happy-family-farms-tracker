@@ -48,11 +48,11 @@ async function buildFarmExcelWorkbook() {
     ['EXP-101', '2026-09-01', 'Silage', 'Green Fodder Supplier', 1200.00, 'Silage tractor load'],
     ['EXP-102', '2026-09-01', 'Grass Cutter Wage', 'Murugan (Worker)', 600.00, 'Daily grass cutting wage'],
     ['EXP-103', '2026-09-01', 'Feed / Punnaku', 'Lakshmi Feed Store', 450.00, '50kg Oil cake bag'],
-    ['EXP-104', '2026-09-01', 'Other Expense', 'Veterinary Doctor', 100.00, 'Cattle health checkup'],
+    ['EXP-104', '2026-09-01', 'Other Expense', 'Veterinary Doctor', 100.00, 'Cow health checkup'],
     ['EXP-105', '2026-09-02', 'Grass Cutter Wage', 'Murugan (Worker)', 600.00, 'Daily wage'],
-    ['EXP-106', '2026-09-02', 'Feed / Punnaku', 'Lakshmi Feed Store', 450.00, 'Concentrate feed'],
+    ['EXP-106', '2026-09-02', 'Feed / Punnaku', 'Lakshmi Feed Store', 450.00, '50kg Oil cake bag'],
     ['EXP-107', '2026-09-03', 'Grass Cutter Wage', 'Murugan (Worker)', 600.00, 'Daily wage'],
-    ['EXP-108', '2026-09-03', 'Feed / Punnaku', 'Cattle Store', 500.00, 'Punnaku bag'],
+    ['EXP-108', '2026-09-03', 'Feed / Punnaku', 'Cow Store', 500.00, 'Punnaku bag'],
     ['EXP-109', '2026-09-04', 'Silage', 'Fodder Supplier', 1200.00, 'New silage batch']
   ];
 
@@ -101,10 +101,10 @@ async function buildFarmExcelWorkbook() {
   });
 
   const registeredCustomers = [
-    ['CUST-101', 'Dharshan', 'Cattle Milk', 'Daily Customer', '0764805061', 'Route 1 - Green Valley', 0, 1, 0, 2, 1, 'Active'],
-    ['CUST-102', 'Hotel Royal Milk Account', 'Cattle Milk', 'Monthly Customer', '9845012345', 'Main Street Market #45', 10, 10, 5, 20, 15, 'Active'],
+    ['CUST-101', 'Dharshan', 'Cow Milk', 'Daily Customer', '0764805061', 'Route 1 - Green Valley', 0, 1, 0, 2, 1, 'Active'],
+    ['CUST-102', 'Hotel Royal Milk Account', 'Cow Milk', 'Monthly Customer', '9845012345', 'Main Street Market #45', 10, 10, 5, 20, 15, 'Active'],
     ['CUST-103', 'Sita Lakshmi', 'Goat Milk', 'Daily Customer', '9988776655', 'Route 2 - Lakeview Homes', 2, 1, 0, 1, 0, 'Active'],
-    ['CUST-104', 'City Sweets & Bakery', 'Cattle Milk', 'Monthly Customer', '9776655443', 'Bypass Road #12', 0, 0, 20, 30, 25, 'Active'],
+    ['CUST-104', 'City Sweets & Bakery', 'Cow Milk', 'Monthly Customer', '9776655443', 'Bypass Road #12', 0, 0, 20, 30, 25, 'Active'],
     ['CUST-105', 'Spot Walk-in Buyers', 'Goat Milk', 'Time-Being', 'N/A', 'Farm Gate Direct', 0, 0, 0, 0, 0, 'Active']
   ];
 
@@ -182,10 +182,10 @@ async function buildFarmExcelWorkbook() {
   });
 
   const sampleData = [
-    { date: '2026-09-07', milkType: 'Cattle Milk', custType: 'Daily Customer', custName: 'Route 1 & Spot Sales', q175: 10, q475: 20, q500: 15, q750: 44, q1000: 34, silage: 0, wage: 600, feed: 460, other: 0, remarks: 'Today total farm record' },
+    { date: '2026-09-07', milkType: 'Cow Milk', custType: 'Daily Customer', custName: 'Route 1 & Spot Sales', q175: 10, q475: 20, q500: 15, q750: 44, q1000: 34, silage: 0, wage: 600, feed: 460, other: 0, remarks: 'Today total farm record' },
     { date: '2026-09-06', milkType: 'Goat Milk', custType: 'Daily Customer', custName: 'Sita Lakshmi & Goat Milk Clients', q175: 12, q475: 10, q500: 8, q750: 15, q1000: 5, silage: 0, wage: 600, feed: 450, other: 0, remarks: 'Weekend sales spurt' },
-    { date: '2026-09-05', milkType: 'Cattle Milk', custType: 'Time-Being', custName: 'Event & Walk-ins', q175: 5, q475: 32, q500: 10, q750: 42, q1000: 30, silage: 0, wage: 650, feed: 480, other: 120, remarks: 'Cutter overtime wage' },
-    { date: '2026-09-04', milkType: 'Cattle Milk', custType: 'Daily Customer', custName: 'Route 1 & City Sweets', q175: 8, q475: 28, q500: 12, q750: 38, q1000: 28, silage: 1200, wage: 600, feed: 450, other: 0, remarks: 'New silage batch bought' },
+    { date: '2026-09-05', milkType: 'Cow Milk', custType: 'Time-Being', custName: 'Event & Walk-ins', q175: 5, q475: 32, q500: 10, q750: 42, q1000: 30, silage: 0, wage: 650, feed: 480, other: 120, remarks: 'Cutter overtime wage' },
+    { date: '2026-09-04', milkType: 'Cow Milk', custType: 'Daily Customer', custName: 'Route 1 & City Sweets', q175: 8, q475: 28, q500: 12, q750: 38, q1000: 28, silage: 1200, wage: 600, feed: 450, other: 0, remarks: 'New silage batch bought' },
     { date: '2026-09-03', milkType: 'Goat Milk', custType: 'Monthly Customer', custName: 'City Sweets & Bakery', q175: 15, q475: 20, q500: 10, q750: 25, q1000: 10, silage: 0, wage: 600, feed: 500, other: 50, remarks: 'High 1L demand' }
   ];
 
@@ -294,7 +294,7 @@ async function buildFarmExcelWorkbook() {
   catHeaders.eachCell(c => c.fill = primaryHeaderFill);
 
   const milkCategories = [
-    { name: 'Cattle Milk', rangeFormulaLitres: `SUMIF('Daily Tracker'!B2:B${totalRowIdx-1}, "Cattle Milk", 'Daily Tracker'!J2:J${totalRowIdx-1})`, rangeFormulaRev: `SUMIF('Daily Tracker'!B2:B${totalRowIdx-1}, "Cattle Milk", 'Daily Tracker'!P2:P${totalRowIdx-1})` },
+    { name: 'Cow Milk', rangeFormulaLitres: `SUMIF('Daily Tracker'!B2:B${totalRowIdx-1}, "Cow Milk", 'Daily Tracker'!J2:J${totalRowIdx-1})`, rangeFormulaRev: `SUMIF('Daily Tracker'!B2:B${totalRowIdx-1}, "Cow Milk", 'Daily Tracker'!P2:P${totalRowIdx-1})` },
     { name: 'Goat Milk', rangeFormulaLitres: `SUMIF('Daily Tracker'!B2:B${totalRowIdx-1}, "Goat Milk", 'Daily Tracker'!J2:J${totalRowIdx-1})`, rangeFormulaRev: `SUMIF('Daily Tracker'!B2:B${totalRowIdx-1}, "Goat Milk", 'Daily Tracker'!P2:P${totalRowIdx-1})` }
   ];
 
@@ -322,7 +322,7 @@ async function buildFarmExcelWorkbook() {
   const settingsSheet = workbook.addWorksheet('Rates & Settings', { views: [{ showGridLines: true }] });
   settingsSheet.columns = [
     { header: 'Bottle Size / Item', key: 'size', width: 25 },
-    { header: 'Cattle Milk Rate (Rs.)', key: 'cattle', width: 25 },
+    { header: 'Cow Milk Rate (Rs.)', key: 'cattle', width: 25 },
     { header: 'Goat Milk Rate (Rs.)', key: 'goat', width: 25 },
     { header: 'Unit / Measure', key: 'unit', width: 20 },
     { header: 'Notes & Instructions', key: 'notes', width: 40 }
@@ -353,7 +353,7 @@ async function buildFarmExcelWorkbook() {
   const filePath2 = path.join('/home/dharshan/.gemini/antigravity/scratch/farm_expense_tracker', 'Farm_Expenses_And_Revenue_Tracker.xlsx');
   await workbook.xlsx.writeFile(filePath1);
   await workbook.xlsx.writeFile(filePath2);
-  console.log(`Excel file re-generated for Happy Family Farms (Cattle & Goat Milk) at: ${filePath1}`);
+  console.log(`Excel file re-generated for Happy Family Farms (Cow & Goat Milk) at: ${filePath1}`);
 }
 
 buildFarmExcelWorkbook().catch(err => {

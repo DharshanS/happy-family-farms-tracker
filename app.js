@@ -1,4 +1,4 @@
-// Initial Farm State & Default Sample Data for Cattle Milk & Goat Milk (Dual Milk Purchases Supported)
+// Initial Farm State & Default Sample Data for Cow Milk & Goat Milk (Dual Milk Purchases Supported)
 const DEFAULT_RATES = {
   cattle: { rate175: 15.00, rate475: 35.00, rate500: 38.00, rate750: 50.00, rate1000: 65.00 },
   goat: { rate175: 25.00, rate475: 60.00, rate500: 65.00, rate750: 90.00, rate1000: 120.00 }
@@ -6,12 +6,12 @@ const DEFAULT_RATES = {
 
 const SAMPLE_CUSTOMERS = [
   { 
-    id: 'CUST-101', name: 'Dharshan', type: 'Daily Customer', milkType: 'Both (Cattle & Goat)', phone: '0764805061', address: 'Route 1 - Green Valley',
+    id: 'CUST-101', name: 'Dharshan', type: 'Daily Customer', milkType: 'Both (Cow & Goat)', phone: '0764805061', address: 'Route 1 - Green Valley',
     regCattle175: 0, regCattle475: 1, regCattle500: 0, regCattle750: 2, regCattle1000: 1,
     regGoat175: 1, regGoat475: 0, regGoat500: 1, regGoat750: 0, regGoat1000: 0, status: 'Active'
   },
   { 
-    id: 'CUST-102', name: 'Hotel Royal Milk Account', type: 'Monthly Customer', milkType: 'Cattle Milk Only', phone: '9845012345', address: 'Main Street Market #45',
+    id: 'CUST-102', name: 'Hotel Royal Milk Account', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: '9845012345', address: 'Main Street Market #45',
     regCattle175: 10, regCattle475: 10, regCattle500: 5, regCattle750: 20, regCattle1000: 15,
     regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active'
   },
@@ -21,7 +21,7 @@ const SAMPLE_CUSTOMERS = [
     regGoat175: 2, regGoat475: 1, regGoat500: 0, regGoat750: 1, regGoat1000: 0, status: 'Active'
   },
   { 
-    id: 'CUST-104', name: 'Green Park Canteen', type: 'Weekly Customer', milkType: 'Both (Cattle & Goat)', phone: '0712345678', address: 'Route 3 - Park Avenue',
+    id: 'CUST-104', name: 'Green Park Canteen', type: 'Weekly Customer', milkType: 'Both (Cow & Goat)', phone: '0712345678', address: 'Route 3 - Park Avenue',
     regCattle175: 5, regCattle475: 10, regCattle500: 5, regCattle750: 10, regCattle1000: 5,
     regGoat175: 2, regGoat475: 2, regGoat500: 2, regGoat750: 2, regGoat1000: 2, status: 'Active'
   }
@@ -40,7 +40,7 @@ const SAMPLE_RECORDS = [
     id: 'rec-2026-09-07', date: '2026-09-07', custType: 'Daily Customer', custName: 'Dharshan & Spot Sales', paymentStatus: 'Paid', amountPaid: 5790.00,
     cattle_q175: 10, cattle_q475: 20, cattle_q500: 15, cattle_q750: 44, cattle_q1000: 34,
     goat_q175: 4, goat_q475: 6, goat_q500: 5, goat_q750: 10, goat_q1000: 2,
-    silage: 0, wage: 600, feed: 460, other: 0, remarks: 'Today total farm record (Cattle & Goat Milk)' 
+    silage: 0, wage: 600, feed: 460, other: 0, remarks: 'Today total farm record (Cow & Goat Milk)' 
   },
   { 
     id: 'rec-2026-09-06', date: '2026-09-06', custType: 'Weekly Customer', custName: 'Green Park Canteen & Sita Lakshmi', paymentStatus: 'Partial', amountPaid: 1500.00,
@@ -95,8 +95,8 @@ function getCustBadge(type) {
 
 function getMilkBadge(milkType) {
   if (milkType === 'Goat Milk Only') return `<span class="badge-cust badge-monthly" style="background-color: rgba(99, 102, 241, 0.15); color: #818cf8; border-color: rgba(99, 102, 241, 0.3);"><i class="fa-solid fa-leaf"></i> Goat Milk Only</span>`;
-  if (milkType === 'Cattle Milk Only') return `<span class="badge-cust badge-daily" style="background-color: rgba(20, 184, 166, 0.15); color: #14b8a6; border-color: rgba(20, 184, 166, 0.3);"><i class="fa-solid fa-cow"></i> Cattle Milk Only</span>`;
-  return `<span class="badge-cust badge-weekly" style="background-color: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.3);"><i class="fa-solid fa-layer-group"></i> Both (Cattle & Goat)</span>`;
+  if (milkType === 'Cow Milk Only' || milkType === 'Cattle Milk Only') return `<span class="badge-cust badge-daily" style="background-color: rgba(20, 184, 166, 0.15); color: #14b8a6; border-color: rgba(20, 184, 166, 0.3);"><i class="fa-solid fa-cow"></i> Cow Milk Only</span>`;
+  return `<span class="badge-cust badge-weekly" style="background-color: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.3);"><i class="fa-solid fa-layer-group"></i> Both (Cow & Goat)</span>`;
 }
 
 function normalizeStr(str) {
@@ -762,7 +762,7 @@ function editCustomer(id) {
   if (document.getElementById('editingCustId')) document.getElementById('editingCustId').value = c.id;
   document.getElementById('regCustName').value = c.name;
   document.getElementById('regCustType').value = c.type;
-  document.getElementById('regMilkType').value = c.milkType || 'Both (Cattle & Goat)';
+  document.getElementById('regMilkType').value = (c.milkType === 'Cattle Milk Only' ? 'Cow Milk Only' : (c.milkType === 'Both (Cattle & Goat)' ? 'Both (Cow & Goat)' : c.milkType)) || 'Both (Cow & Goat)';
   document.getElementById('regPhone').value = c.phone === 'N/A' ? '' : c.phone;
   document.getElementById('regAddress').value = c.address === 'N/A' ? '' : c.address;
 
@@ -1208,7 +1208,7 @@ function deleteExpense(id) {
   }
 }
 
-// Settings Form for Cattle Milk & Goat Milk Pricing Matrix
+// Settings Form for Cow Milk & Goat Milk Pricing Matrix
 function initSettingsForm() {
   const form = document.getElementById('settingsForm');
   if (!form) return;
@@ -1249,7 +1249,7 @@ function initSettingsForm() {
     saveState();
     updateRatePreviews();
     renderApp();
-    alert('✅ Cattle Milk & Goat Milk Pricing Settings Saved Successfully!');
+    alert('✅ Cow Milk & Goat Milk Pricing Settings Saved Successfully!');
   });
 }
 
@@ -1414,7 +1414,7 @@ function renderCustomerDirectory(processedRecords) {
     tr.innerHTML = `
       <td><code>${c.id}</code></td>
       <td><strong>${c.name}</strong></td>
-      <td>${getMilkBadge(c.milkType || 'Both (Cattle & Goat)')}</td>
+      <td>${getMilkBadge(c.milkType || 'Both (Cow & Goat)')}</td>
       <td>${getCustBadge(c.type)}</td>
       <td>${c.phone}</td>
       <td>${c.address}</td>
@@ -1548,7 +1548,7 @@ function viewRecord(id) {
         <div class="val">${rec.custName || 'N/A'}</div>
       </div>
       <div class="detail-item">
-        <div class="lbl">Cattle Milk Sales</div>
+        <div class="lbl">Cow Milk Sales</div>
         <div class="val text-teal" style="font-size: 13px;">
           ${formatLitres(rec.cattleLitres)} (${formatCurrency(rec.cattleRev)})<br>
           <small style="color: var(--text-muted);">175ml:${rec.cattle_q175} | 475ml:${rec.cattle_q475} | 500ml:${rec.cattle_q500} | 750ml:${rec.cattle_q750} | 1L:${rec.cattle_q1000}</small>
@@ -1658,11 +1658,11 @@ function openReceiptModal(id) {
   tbody.innerHTML = '';
 
   const items = [
-    { type: 'Cattle Milk', size: '175ml', qty: rec.cattle_q175, price: cattleRates.rate175 },
-    { type: 'Cattle Milk', size: '475ml', qty: rec.cattle_q475, price: cattleRates.rate475 },
-    { type: 'Cattle Milk', size: '500ml', qty: rec.cattle_q500, price: cattleRates.rate500 },
-    { type: 'Cattle Milk', size: '750ml', qty: rec.cattle_q750, price: cattleRates.rate750 },
-    { type: 'Cattle Milk', size: '1000ml (1L)', qty: rec.cattle_q1000, price: cattleRates.rate1000 },
+    { type: 'Cow Milk', size: '175ml', qty: rec.cattle_q175, price: cattleRates.rate175 },
+    { type: 'Cow Milk', size: '475ml', qty: rec.cattle_q475, price: cattleRates.rate475 },
+    { type: 'Cow Milk', size: '500ml', qty: rec.cattle_q500, price: cattleRates.rate500 },
+    { type: 'Cow Milk', size: '750ml', qty: rec.cattle_q750, price: cattleRates.rate750 },
+    { type: 'Cow Milk', size: '1000ml (1L)', qty: rec.cattle_q1000, price: cattleRates.rate1000 },
     { type: 'Goat Milk', size: '175ml', qty: rec.goat_q175, price: goatRates.rate175 },
     { type: 'Goat Milk', size: '475ml', qty: rec.goat_q475, price: goatRates.rate475 },
     { type: 'Goat Milk', size: '500ml', qty: rec.goat_q500, price: goatRates.rate500 },
@@ -1876,7 +1876,7 @@ function renderCharts(recordsInput) {
   chartCustomerBreakdown = new Chart(ctxCust, {
     type: 'doughnut',
     data: {
-      labels: ['Cattle Milk Revenue (Rs.)', 'Goat Milk Revenue (Rs.)'],
+      labels: ['Cow Milk Revenue (Rs.)', 'Goat Milk Revenue (Rs.)'],
       datasets: [{
         data: [cattleRev, goatRev],
         backgroundColor: ['#14b8a6', '#818cf8'],
@@ -1903,9 +1903,9 @@ function exportToExcel() {
   ]);
   const expenseDirectoryData = [expHeaders, ...expRows];
 
-  const custHeaders = ["Customer ID", "Customer Name", "Milk Preference", "Customer Category", "Phone Number", "Delivery Address / Route", "Cattle Defaults (175/475/500/750/1L)", "Goat Defaults (175/475/500/750/1L)", "Status"];
+  const custHeaders = ["Customer ID", "Customer Name", "Milk Preference", "Customer Category", "Phone Number", "Delivery Address / Route", "Cow Defaults (175/475/500/750/1L)", "Goat Defaults (175/475/500/750/1L)", "Status"];
   const custRows = appState.customers.map(c => [
-    c.id, c.name, c.milkType || 'Both (Cattle & Goat)', c.type, c.phone, c.address,
+    c.id, c.name, c.milkType || 'Both (Cow & Goat)', c.type, c.phone, c.address,
     `${c.regCattle175||0}/${c.regCattle475||0}/${c.regCattle500||0}/${c.regCattle750||0}/${c.regCattle1000||0}`,
     `${c.regGoat175||0}/${c.regGoat475||0}/${c.regGoat500||0}/${c.regGoat750||0}/${c.regGoat1000||0}`,
     c.status
@@ -1917,13 +1917,13 @@ function exportToExcel() {
 
   const settingsData = [
     ["Milk Category", "175ml Rate (Rs.)", "475ml Rate (Rs.)", "500ml Rate (Rs.)", "750ml Rate (Rs.)", "1000ml Rate (Rs.)"],
-    ["Cattle Milk (Cow)", cattleRates.rate175, cattleRates.rate475, cattleRates.rate500, cattleRates.rate750, cattleRates.rate1000],
+    ["Cow Milk", cattleRates.rate175, cattleRates.rate475, cattleRates.rate500, cattleRates.rate750, cattleRates.rate1000],
     ["Goat Milk", goatRates.rate175, goatRates.rate475, goatRates.rate500, goatRates.rate750, goatRates.rate1000]
   ];
 
   const trackerHeader = [
     "Date", "Customer Type", "Customer / Note",
-    "Cattle 175ml", "Cattle 475ml", "Cattle 500ml", "Cattle 750ml", "Cattle 1L", "Cattle Litres", "Cattle Rev (Rs.)",
+    "Cow 175ml", "Cow 475ml", "Cow 500ml", "Cow 750ml", "Cow 1L", "Cow Litres", "Cow Rev (Rs.)",
     "Goat 175ml", "Goat 475ml", "Goat 500ml", "Goat 750ml", "Goat 1L", "Goat Litres", "Goat Rev (Rs.)",
     "Total Litres", "Total Revenue (Rs.)",
     "Silage Cost (Rs.)", "Grass Wage (Rs.)", "Feed/Punnaku (Rs.)", "Other Expense (Rs.)", "Total Expenses (Rs.)",
@@ -1954,7 +1954,7 @@ function exportToExcel() {
   const categorySummaryData = [
     ["Milk Category Performance Summary"],
     ["Milk Category", "Total Litres Sold", "Total Revenue Generated (Rs.)", "Revenue Share %"],
-    ["Cattle Milk", cattleLitres, cattleRev, totRevAll > 0 ? (cattleRev/totRevAll) : 0],
+    ["Cow Milk", cattleLitres, cattleRev, totRevAll > 0 ? (cattleRev/totRevAll) : 0],
     ["Goat Milk", goatLitres, goatRev, totRevAll > 0 ? (goatRev/totRevAll) : 0]
   ];
 
