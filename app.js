@@ -313,12 +313,18 @@ function logoutUser() {
 
 function showLoginModal() {
   const modal = document.getElementById('loginModal');
-  if (modal) modal.classList.add('active');
+  if (modal) {
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+  }
 }
 
 function hideLoginModal() {
   const modal = document.getElementById('loginModal');
-  if (modal) modal.classList.remove('active');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
 }
 
 function updateUserSessionUI(userObj) {
