@@ -277,6 +277,37 @@ function loginUser(userObj) {
 function logoutUser() {
   appState.currentUser = null;
   localStorage.removeItem('farm_user');
+
+  const nameLabel = document.getElementById('userNameLabel');
+  const roleLabel = document.getElementById('userRoleLabel');
+  const sbName = document.getElementById('sidebarUserName');
+  const sbRole = document.getElementById('sidebarUserRole');
+
+  if (nameLabel) nameLabel.textContent = 'Guest User';
+  if (roleLabel) {
+    roleLabel.textContent = 'Unauthenticated';
+    roleLabel.style.color = 'var(--text-muted)';
+  }
+  if (sbName) sbName.textContent = 'Guest User';
+  if (sbRole) {
+    sbRole.textContent = 'Unauthenticated';
+    sbRole.style.color = 'var(--text-muted)';
+  }
+
+  const loginUsername = document.getElementById('loginUsername');
+  const loginPassword = document.getElementById('loginPassword');
+  const loginNotice = document.getElementById('loginErrorNotice');
+  if (loginUsername) loginUsername.value = '';
+  if (loginPassword) loginPassword.value = '';
+  if (loginNotice) loginNotice.style.display = 'none';
+
+  const sidebar = document.querySelector('.sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+  }
+
   showLoginModal();
 }
 
@@ -291,15 +322,27 @@ function hideLoginModal() {
 }
 
 function updateUserSessionUI(userObj) {
+  if (!userObj) return;
+
   const nameLabel = document.getElementById('userNameLabel');
   const roleLabel = document.getElementById('userRoleLabel');
+  const sbName = document.getElementById('sidebarUserName');
+  const sbRole = document.getElementById('sidebarUserRole');
 
   if (nameLabel) nameLabel.textContent = `${userObj.icon} ${userObj.name}`;
   if (roleLabel) {
     roleLabel.textContent = userObj.role;
     roleLabel.style.color = userObj.color;
   }
+  if (sbName) sbName.textContent = `${userObj.icon} ${userObj.name}`;
+  if (sbRole) {
+    sbRole.textContent = userObj.role;
+    sbRole.style.color = userObj.color;
+  }
 }
+
+window.logoutUser = logoutUser;
+window.quickLogin = quickLogin;
 
 function applyRolePermissions(userObj) {
   if (!userObj) return;

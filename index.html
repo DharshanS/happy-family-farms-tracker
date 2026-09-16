@@ -38,9 +38,14 @@
       <div class="brand-icon-sm"><i class="fa-solid fa-cow"></i></div>
       <span class="mobile-brand-title">Happy Family Farms</span>
     </div>
-    <button id="mobileQuickAddBtn" class="mobile-quick-btn" title="Add Daily Record">
-      <i class="fa-solid fa-plus"></i>
-    </button>
+    <div style="display: flex; gap: 6px; align-items: center;">
+      <button onclick="logoutUser()" class="mobile-quick-btn" title="Sign Out / Logout" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+      <button id="mobileQuickAddBtn" class="mobile-quick-btn" title="Add Daily Record">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+    </div>
   </header>
 
   <div class="app-container">
@@ -85,6 +90,15 @@
 
       <div class="sidebar-footer">
         <p><i class="fa-solid fa-shield-halved"></i> Cattle & Goat Milk Active</p>
+        <div class="sidebar-user-info" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; flex-direction: column;">
+            <span id="sidebarUserName" style="font-size: 12px; font-weight: 700; color: var(--text-main);">Guest User</span>
+            <span id="sidebarUserRole" style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Unauthenticated</span>
+          </div>
+          <button class="btn btn-rose btn-sm" onclick="logoutUser()" title="Sign Out / Logout" style="padding: 4px 10px; font-size: 11px;">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+          </button>
+        </div>
       </div>
     </aside>
 
@@ -103,8 +117,8 @@
               <span id="userNameLabel" style="font-size: 12px; font-weight: 700; color: var(--text-main);">Guest User</span>
               <span id="userRoleLabel" style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Unauthenticated</span>
             </div>
-            <button id="btnLogout" class="btn btn-secondary btn-sm" style="padding: 4px 8px; margin-left: 6px; font-size: 11px;" title="Sign Out">
-              <i class="fa-solid fa-right-from-bracket"></i>
+            <button id="btnLogout" class="btn btn-secondary btn-sm" onclick="logoutUser()" style="padding: 4px 8px; margin-left: 6px; font-size: 11px;" title="Sign Out">
+              <i class="fa-solid fa-right-from-bracket"></i> Sign Out
             </button>
           </div>
           <button id="btnQuickExpense" class="btn btn-rose">
