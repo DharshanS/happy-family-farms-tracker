@@ -56,7 +56,14 @@ const SAMPLE_RECORDS = [
   }
 ];
 
+const USER_ACCOUNTS = [
+  { username: 'admin', password: 'admin123', name: 'Dharshan (Admin)', role: 'Admin', icon: '👑', color: '#10b981', allowedTabs: ['dashboard', 'customers', 'expenses', 'daily-entry', 'records', 'settings'] },
+  { username: 'sales', password: 'sales123', name: 'Sales Representative', role: 'Sales', icon: '💼', color: '#f59e0b', allowedTabs: ['dashboard', 'customers', 'daily-entry', 'records'] },
+  { username: 'operator', password: 'op123', name: 'Farm Operator', role: 'Operator', icon: '🚜', color: '#6366f1', allowedTabs: ['daily-entry', 'expenses'] }
+];
+
 let appState = {
+  currentUser: JSON.parse(localStorage.getItem('farm_user')) || null,
   rates: JSON.parse(localStorage.getItem('farm_rates')) || DEFAULT_RATES,
   customers: JSON.parse(localStorage.getItem('farm_customers')) || SAMPLE_CUSTOMERS,
   records: JSON.parse(localStorage.getItem('farm_records')) || SAMPLE_RECORDS,
@@ -192,6 +199,7 @@ function initTouchSteppers() {
 
 // Initialize Application
 document.addEventListener('DOMContentLoaded', () => {
+  initAuth();
   initNavigation();
   initTouchSteppers();
   initFormListeners();
@@ -207,6 +215,124 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAndLoadDateRecord(today);
   }
 });
+
+// Authentication & Role Management Engine
+function initAuth() {
+  const loginForm = document.getElementById('loginForm');
+  const loginNotice = document.getElementById('loginErrorNotice');
+  const btnLogout = document.getElementById('btnLogout');
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const u = document.getElementById('loginUsername').value.trim();
+      const p = document.getElementById('loginPassword').value.trim();
+
+      const account = USER_ACCOUNTS.find(a => a.username.toLowerCase() === u.toLowerCase() && a.password === p);
+      if (account) {
+        if (loginNotice) loginNotice.style.display = 'none';
+        loginUser(account);
+      } else {
+        if (loginNotice) {
+          loginNotice.style.display = 'block';
+          loginNotice.textContent = '❌ Invalid Username or Password. Try admin/admin123, sales/sales123, or operator/op123.';
+        }
+      }
+    });
+  }
+
+  if (btnLogout) {
+    btnLogout.addEventListener('click', () => {
+      logoutUser();
+    });
+  }
+
+  if (appState.currentUser) {
+    updateUserSessionUI(appState.currentUser);
+    applyRolePermissions(appState.currentUser);
+  } else {
+    showLoginModal();
+  }
+}
+
+function quickLogin(roleKey) {
+  const account = USER_ACCOUNTS.find(a => a.role.toLowerCase() === roleKey.toLowerCase());
+  if (account) {
+    loginUser(account);
+  }
+}
+
+function loginUser(userObj) {
+  appState.currentUser = userObj;
+  localStorage.setItem('farm_user', JSON.stringify(userObj));
+  hideLoginModal();
+  updateUserSessionUI(userObj);
+  applyRolePermissions(userObj);
+
+  const defaultTab = userObj.allowedTabs[0] || 'daily-entry';
+  const tabBtn = document.querySelector(`.nav-item[data-tab="${defaultTab}"]`) || document.querySelector(`.mobile-nav-item[data-tab="${defaultTab}"]`);
+  if (tabBtn) tabBtn.click();
+}
+
+function logoutUser() {
+  appState.currentUser = null;
+  localStorage.removeItem('farm_user');
+  showLoginModal();
+}
+
+function showLoginModal() {
+  const modal = document.getElementById('loginModal');
+  if (modal) modal.classList.add('active');
+}
+
+function hideLoginModal() {
+  const modal = document.getElementById('loginModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function updateUserSessionUI(userObj) {
+  const nameLabel = document.getElementById('userNameLabel');
+  const roleLabel = document.getElementById('userRoleLabel');
+
+  if (nameLabel) nameLabel.textContent = `${userObj.icon} ${userObj.name}`;
+  if (roleLabel) {
+    roleLabel.textContent = userObj.role;
+    roleLabel.style.color = userObj.color;
+  }
+}
+
+function applyRolePermissions(userObj) {
+  if (!userObj) return;
+
+  const allowed = userObj.allowedTabs || ['daily-entry'];
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const tab = item.getAttribute('data-tab');
+    if (allowed.includes(tab)) {
+      item.style.display = 'flex';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+
+  document.querySelectorAll('.mobile-nav-item').forEach(item => {
+    const tab = item.getAttribute('data-tab');
+    if (allowed.includes(tab)) {
+      item.style.display = 'flex';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+
+  const isDeleteAllowed = (userObj.role === 'Admin');
+  document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.style.display = isDeleteAllowed ? 'inline-flex' : 'none';
+  });
+
+  const isExportAllowed = (userObj.role === 'Admin' || userObj.role === 'Sales');
+  const btnExport = document.getElementById('btnExportExcel');
+  if (btnExport) btnExport.style.display = isExportAllowed ? 'block' : 'none';
+}
 
 // Navigation Logic
 function initNavigation() {
@@ -1102,6 +1228,7 @@ function renderApp() {
   renderExpensesTable();
   renderTable(processedRecords);
   renderCharts(processedRecords);
+  if (appState.currentUser) applyRolePermissions(appState.currentUser);
 }
 
 // Render Registered Customers Dropdown in Daily Entry

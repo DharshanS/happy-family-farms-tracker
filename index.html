@@ -97,6 +97,16 @@
           <p class="subtitle">Track Cattle Milk & Goat Milk revenue (175ml, 475ml, 500ml, 750ml, 1000ml) and daily operating expenses.</p>
         </div>
         <div class="header-actions">
+          <div id="userSessionBadge" class="user-session-pill" style="display: flex; align-items: center; gap: 8px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-color); padding: 4px 12px; border-radius: 20px;">
+            <i class="fa-solid fa-circle-user" style="font-size: 18px; color: var(--teal-accent);"></i>
+            <div style="display: flex; flex-direction: column; text-align: left;">
+              <span id="userNameLabel" style="font-size: 12px; font-weight: 700; color: var(--text-main);">Guest User</span>
+              <span id="userRoleLabel" style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Unauthenticated</span>
+            </div>
+            <button id="btnLogout" class="btn btn-secondary btn-sm" style="padding: 4px 8px; margin-left: 6px; font-size: 11px;" title="Sign Out">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
           <button id="btnQuickExpense" class="btn btn-rose">
             <i class="fa-solid fa-receipt"></i> Log Expense
           </button>
@@ -917,8 +927,52 @@
       <i class="fa-solid fa-sliders"></i>
       <span>Rates</span>
     </a>
-  </nav>
+  <!-- LOGIN MODAL / PORTAL OVERLAY -->
+  <div id="loginModal" class="modal-overlay active" style="z-index: 99999; background: rgba(11, 19, 41, 0.95); backdrop-filter: blur(10px);">
+    <div class="modal-card" style="max-width: 440px; padding: 32px;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div class="brand-icon" style="width: 56px; height: 56px; margin: 0 auto 12px auto; font-size: 28px; background: linear-gradient(135deg, var(--teal-accent), #059669); color: white; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
+          <i class="fa-solid fa-cow"></i>
+        </div>
+        <h2 style="font-size: 22px; font-weight: 700; color: var(--text-main);">Happy Family Farms</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Role-Based Dairy Management Portal</p>
+      </div>
 
-  <script src="app.js?v=8.0"></script>
+      <form id="loginForm" style="display: flex; flex-direction: column; gap: 16px;">
+        <div id="loginErrorNotice" style="display: none; background: rgba(244, 63, 94, 0.15); color: #f43f5e; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(244, 63, 94, 0.3); text-align: center;"></div>
+
+        <div class="form-group">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" placeholder="e.g. admin" required style="padding: 12px;">
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required style="padding: 12px;">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="margin-top: 8px;">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In to Portal
+        </button>
+      </form>
+
+      <div style="margin-top: 24px; border-top: 1px dashed var(--border-color); padding-top: 16px;">
+        <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 10px;">Quick Demo One-Click Login:</p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <button type="button" class="btn btn-emerald btn-sm" onclick="quickLogin('admin')" title="Admin Role">
+            👑 Admin
+          </button>
+          <button type="button" class="btn btn-amber btn-sm" onclick="quickLogin('sales')" title="Sales Role">
+            💼 Sales
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="quickLogin('operator')" title="Operator Role">
+            🚜 Operator
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js?v=9.0"></script>
 </body>
 </html>

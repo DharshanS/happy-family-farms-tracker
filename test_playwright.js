@@ -1,6 +1,5 @@
 const { chromium } = require('playwright');
 const path = require('path');
-const fs = require('fs');
 
 const ARTIFACT_DIR = '/home/dharshan/.gemini/antigravity/brain/dea2e8d0-83eb-49c6-8632-eede0122f240';
 
@@ -29,15 +28,25 @@ const ARTIFACT_DIR = '/home/dharshan/.gemini/antigravity/brain/dea2e8d0-83eb-49c
     const page = await context.newPage();
     await page.goto('http://localhost:5050/', { waitUntil: 'networkidle' });
 
-    for (const tab of tabs) {
-      const selector = vp.width <= 1024 
-        ? `.mobile-nav-item[data-tab="${tab}"]`
-        : `.nav-item[data-tab="${tab}"]`;
-
-      if (await page.$(selector)) {
-        await page.click(selector);
-        await page.waitForTimeout(300);
+    // Handle Login Modal via window quickLogin evaluation
+    await page.evaluate(() => {
+      if (typeof window.quickLogin === 'function') {
+        window.quickLogin('admin');
       }
+    });
+    await page.waitForTimeout(300);
+
+    for (const tab of tabs) {
+      await page.evaluate(targetTab => {
+        const desktopNav = document.querySelectorAll('.nav-item');
+        const mobileNav = document.querySelectorAll('.mobile-nav-item');
+        const tabContents = document.querySelectorAll('.tab-content');
+        desktopNav.forEach(n => n.classList.toggle('active', n.getAttribute('data-tab') === targetTab));
+        mobileNav.forEach(n => n.classList.toggle('active', n.getAttribute('data-tab') === targetTab));
+        tabContents.forEach(t => t.classList.toggle('active', t.id === `tab-${targetTab}`));
+      }, tab);
+
+      await page.waitForTimeout(300);
 
       const imgPath = path.join(ARTIFACT_DIR, `audit_${vp.name}_${tab}.png`);
       await page.screenshot({ path: imgPath, fullPage: false });
