@@ -62,12 +62,23 @@ const USER_ACCOUNTS = [
   { username: 'operator', password: 'op123', name: 'Farm Operator', role: 'Operator', icon: '🚜', color: '#6366f1', allowedTabs: ['daily-entry', 'expenses'] }
 ];
 
+function getStoredArray(key, fallback) {
+  const item = localStorage.getItem(key);
+  if (!item) return fallback;
+  try {
+    const parsed = JSON.parse(item);
+    return (Array.isArray(parsed) && parsed.length > 0) ? parsed : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
 let appState = {
   currentUser: JSON.parse(localStorage.getItem('farm_user')) || null,
   rates: JSON.parse(localStorage.getItem('farm_rates')) || DEFAULT_RATES,
-  customers: JSON.parse(localStorage.getItem('farm_customers')) || SAMPLE_CUSTOMERS,
-  records: JSON.parse(localStorage.getItem('farm_records')) || SAMPLE_RECORDS,
-  expenses: JSON.parse(localStorage.getItem('farm_expenses')) || SAMPLE_EXPENSES
+  customers: getStoredArray('farm_customers', SAMPLE_CUSTOMERS),
+  records: getStoredArray('farm_records', SAMPLE_RECORDS),
+  expenses: getStoredArray('farm_expenses', SAMPLE_EXPENSES)
 };
 
 let chartFinancials = null;
@@ -349,6 +360,16 @@ function updateUserSessionUI(userObj) {
 
 window.logoutUser = logoutUser;
 window.quickLogin = quickLogin;
+
+function restoreDefaultCustomers() {
+  if (confirm('Restore default registered customer directory (Dharshan, Hotel Royal, Sita Lakshmi, etc.)?')) {
+    appState.customers = [...SAMPLE_CUSTOMERS];
+    saveState();
+    renderApp();
+    alert('✅ Registered Customer Directory Restored Successfully!');
+  }
+}
+window.restoreDefaultCustomers = restoreDefaultCustomers;
 
 function applyRolePermissions(userObj) {
   if (!userObj) return;
@@ -1394,7 +1415,17 @@ function renderCustomerDirectory(processedRecords) {
   tbody.innerHTML = '';
 
   if (appState.customers.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding: 24px; color: var(--text-muted);">No customers registered yet.</td></tr>`;
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="11" style="text-align:center; padding: 32px; color: var(--text-muted);">
+          <i class="fa-solid fa-users-slash" style="font-size: 2rem; margin-bottom: 8px; color: var(--rose-accent);"></i><br>
+          No registered customers found.<br><br>
+          <button class="btn btn-amber btn-sm" onclick="restoreDefaultCustomers()">
+            <i class="fa-solid fa-rotate-left"></i> Restore Default Customer Directory
+          </button>
+        </td>
+      </tr>
+    `;
     return;
   }
 
