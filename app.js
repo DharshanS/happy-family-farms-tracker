@@ -81,6 +81,12 @@ let appState = {
   expenses: getStoredArray('farm_expenses', SAMPLE_EXPENSES)
 };
 
+// Guarantee customer list is never empty on load
+if (!appState.customers || appState.customers.length === 0) {
+  appState.customers = JSON.parse(JSON.stringify(SAMPLE_CUSTOMERS));
+  localStorage.setItem('farm_customers', JSON.stringify(appState.customers));
+}
+
 let chartFinancials = null;
 let chartCustomerBreakdown = null;
 let currentFilter = 'ALL';
@@ -1414,19 +1420,9 @@ function renderCustomerDirectory(processedRecords) {
   if (!tbody) return;
   tbody.innerHTML = '';
 
-  if (appState.customers.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="11" style="text-align:center; padding: 32px; color: var(--text-muted);">
-          <i class="fa-solid fa-users-slash" style="font-size: 2rem; margin-bottom: 8px; color: var(--rose-accent);"></i><br>
-          No registered customers found.<br><br>
-          <button class="btn btn-amber btn-sm" onclick="restoreDefaultCustomers()">
-            <i class="fa-solid fa-rotate-left"></i> Restore Default Customer Directory
-          </button>
-        </td>
-      </tr>
-    `;
-    return;
+  if (!appState.customers || appState.customers.length === 0) {
+    appState.customers = JSON.parse(JSON.stringify(SAMPLE_CUSTOMERS));
+    saveState();
   }
 
   appState.customers.forEach(c => {
