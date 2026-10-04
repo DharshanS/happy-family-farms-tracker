@@ -349,6 +349,72 @@ async function buildFarmExcelWorkbook() {
     addedRow.eachCell((cell) => cell.border = thinBorder);
   });
 
+  // ----------------------------------------------------
+  // SHEET 6: Customer Master Directory
+  // ----------------------------------------------------
+  const custSheet = workbook.addWorksheet('Customer Master', { views: [{ showGridLines: true }] });
+  custSheet.columns = [
+    { header: 'Customer ID', key: 'id', width: 16 },
+    { header: 'Customer Name', key: 'name', width: 28 },
+    { header: 'Payment Type', key: 'type', width: 20 },
+    { header: 'Milk Type', key: 'milkType', width: 22 },
+    { header: 'Phone Number', key: 'phone', width: 18 },
+    { header: 'Delivery Address / Notes', key: 'address', width: 30 },
+    { header: 'Status', key: 'status', width: 16 }
+  ];
+
+  custSheet.getRow(1).height = 28;
+  custSheet.getRow(1).eachCell((cell) => {
+    cell.fill = customerHeaderFill;
+    cell.font = headerFont;
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  });
+
+  const sampleCustomersData = [
+    ['CUST-101', 'Helabojun', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Route Sales / Spot', 'Active'],
+    ['CUST-102', 'Goat Milk Sales', 'Daily Customer', 'Goat Milk Only', 'N/A', 'Goat Milk Route', 'Active'],
+    ['CUST-103', 'Ayurveda', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Ayurveda Center', 'Active'],
+    ['CUST-104', 'Gamini', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Route Sales', 'Active'],
+    ['CUST-105', 'Lakeside', 'Weekly Customer', 'Cow Milk Only', 'N/A', 'Lakeside Area', 'Active'],
+    ['CUST-106', 'Mahaiyyawa', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Mahaiyyawa Route', 'Active'],
+    ['CUST-107', 'Arupola Hotel', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Arupola Route', 'Active'],
+    ['CUST-108', 'Karthik', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Town Route', 'Active'],
+    ['CUST-109', 'Logeshwaran', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-110', 'Praveen', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-111', 'Lekraj', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-112', 'Nursery', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-113', 'Mahendran', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-114', 'Ravi Ranjan Pandit', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-115', 'Wijesoriya', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-116', 'Vinayagamoorthy', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-117', 'Aadithya', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-118', 'Selvanayagi', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-119', 'Jeyachandrika', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-120', 'Safras', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-121', 'Yogesh', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-122', 'Uthpala Wickramasinghe', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-123', 'Sundar', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Route Sales', 'Active'],
+    ['CUST-124', 'Asgiriya', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Asgiriya Route', 'Active'],
+    ['CUST-125', 'Periya Samy (Dada)', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-126', 'Hardware', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-127', 'Ranga', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-128', 'Nithya', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-129', 'Pramod Sharma', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-130', 'Sathosa Thenna', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-131', 'Keerthana', 'Monthly Customer', 'Cow Milk Only', 'N/A', 'Monthly Account', 'Active'],
+    ['CUST-132', 'Eb Ayya', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Route Sales', 'Active'],
+    ['CUST-133', 'Eb Akka', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Route Sales', 'Active'],
+    ['CUST-134', 'Pichamalwatta', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Pichamalwatta Route', 'Active'],
+    ['CUST-135', 'Vidhu', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Route Sales', 'Active'],
+    ['CUST-136', 'Ahiran', 'Daily Customer', 'Cow Milk Only', 'N/A', 'Route Sales', 'Active']
+  ];
+
+  sampleCustomersData.forEach((row) => {
+    const r = custSheet.addRow(row);
+    r.height = 20;
+    r.eachCell((cell) => cell.border = thinBorder);
+  });
+
   const filePath1 = path.join('/home/dharshan/.gemini/antigravity/scratch/farm_expense_tracker', 'Happy_Family_Farms_Expense_And_Revenue_Tracker.xlsx');
   const filePath2 = path.join('/home/dharshan/.gemini/antigravity/scratch/farm_expense_tracker', 'Farm_Expenses_And_Revenue_Tracker.xlsx');
   await workbook.xlsx.writeFile(filePath1);
