@@ -4,41 +4,7 @@ const DEFAULT_RATES = {
   goat: { rate175: 25.00, rate475: 60.00, rate500: 65.00, rate750: 90.00, rate1000: 120.00 }
 };
 
-const SAMPLE_CUSTOMERS = [
-  { id: 'CUST-101', name: 'Dharshan', type: 'Daily Customer', milkType: 'Both (Cow & Goat)', phone: '0764805061', address: 'Route 1 - Green Valley', regCattle175: 0, regCattle475: 1, regCattle500: 0, regCattle750: 2, regCattle1000: 1, regGoat175: 1, regGoat475: 0, regGoat500: 1, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-102', name: 'Hotel Royal Milk Account', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: '9845012345', address: 'Main Street Market #45', regCattle175: 10, regCattle475: 10, regCattle500: 5, regCattle750: 20, regCattle1000: 15, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-103', name: 'Sita Lakshmi', type: 'Daily Customer', milkType: 'Goat Milk Only', phone: '9988776655', address: 'Route 2 - Lakeview Homes', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 2, regGoat475: 1, regGoat500: 0, regGoat750: 1, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-104', name: 'Green Park Canteen', type: 'Weekly Customer', milkType: 'Both (Cow & Goat)', phone: '0712345678', address: 'Route 3 - Park Avenue', regCattle175: 5, regCattle475: 10, regCattle500: 5, regCattle750: 10, regCattle1000: 5, regGoat175: 2, regGoat475: 2, regGoat500: 2, regGoat750: 2, regGoat1000: 2, status: 'Active' },
-  { id: 'CUST-105', name: 'Sittha', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Delivery Route 1', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-106', name: 'Gamini', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Delivery Route 1', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-107', name: 'Dada', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 7,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-108', name: 'Hardware', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 8,100)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-109', name: 'Logeshwaran', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 4,200)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-110', name: 'Safras', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 3,000)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-111', name: 'Ranga', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 3,000)', regCattle175: 0, regCattle475: 0, regCattle500: 1, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-112', name: 'Nithya', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Delivery Route 2', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-113', name: 'Pramod Sharma', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 14,400)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-114', name: 'Mahaiyyawa', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Mahaiyyawa Route (Paid: Rs. 600)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 2, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-115', name: 'Arupola Hotel', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Arupola Route (Paid: Rs. 350)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-116', name: 'Karthik', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Town Route (Paid: Rs. 300)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-117', name: 'Sathosa Thenna', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 7,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-118', name: 'Keerthana', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 7,200)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-119', name: 'Helabojun', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Daily Spot (Paid: Rs. 1,200)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-120', name: 'Ayurveda', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Daily Spot (Paid: Rs. 300)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-121', name: 'Lakeside', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Lakeside Route', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-122', name: 'Praveen', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 9,000)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-123', name: 'Lekraj', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 4,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-124', name: 'Nursery 2', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 4,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-125', name: 'Mahendran', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 12,000)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-126', name: 'Ravi Ranjan Pandit', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 8,700)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-127', name: 'Wijesoriya', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 8,100)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-128', name: 'Vinayagamoorthy', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 7,800)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-129', name: 'Aadithya', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 15,600)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-130', name: 'Selvanayagi', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 4,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-131', name: 'Jeyachandrika', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 3,300)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-132', name: 'Yogesh', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 23,400)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
-  { id: 'CUST-133', name: 'Uthpala Wickramasinghe', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 8,100)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' }
-];
+const SAMPLE_CUSTOMERS = [];
 
 const SAMPLE_EXPENSES = [
   { id: 'EXP-101', date: '2026-09-01', category: 'Silage', name: 'Green Fodder Supplier', amount: 1200.00, remarks: 'Silage tractor load' },
@@ -75,7 +41,7 @@ function getStoredArray(key, fallback) {
   if (!item) return fallback;
   try {
     const parsed = JSON.parse(item);
-    return (Array.isArray(parsed) && parsed.length > 0) ? parsed : fallback;
+    return Array.isArray(parsed) ? parsed : fallback;
   } catch (e) {
     return fallback;
   }
@@ -84,15 +50,15 @@ function getStoredArray(key, fallback) {
 let appState = {
   currentUser: JSON.parse(localStorage.getItem('farm_user')) || null,
   rates: JSON.parse(localStorage.getItem('farm_rates')) || DEFAULT_RATES,
-  customers: getStoredArray('farm_customers', SAMPLE_CUSTOMERS),
+  customers: getStoredArray('farm_customers', []),
   records: getStoredArray('farm_records', SAMPLE_RECORDS),
   expenses: getStoredArray('farm_expenses', SAMPLE_EXPENSES)
 };
 
-// Guarantee customer list is never empty on load
-if (!appState.customers || appState.customers.length === 0) {
-  appState.customers = JSON.parse(JSON.stringify(SAMPLE_CUSTOMERS));
-  localStorage.setItem('farm_customers', JSON.stringify(appState.customers));
+// Customer list starts clean for user data entry
+if (!appState.customers) {
+  appState.customers = [];
+  localStorage.setItem('farm_customers', JSON.stringify([]));
 }
 
 let chartFinancials = null;
