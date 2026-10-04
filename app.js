@@ -225,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSettingsForm();
   updateRatePreviews();
   renderApp();
+  fetchStateFromBackend();
 
   const today = new Date().toISOString().split('T')[0];
   if (document.getElementById('entryDate')) {
@@ -708,6 +709,11 @@ function initCustomerRegistrationForm() {
         };
 
         saveState();
+        fetch(`/api/customers/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(appState.customers[custIdx])
+        }).catch(() => {});
         resetCustomerForm();
         renderApp();
         alert(`✅ Customer "${nameInput}" (${editingId}) Updated Successfully!`);
@@ -752,6 +758,11 @@ function initCustomerRegistrationForm() {
 
     appState.customers.unshift(newCust);
     saveState();
+    fetch('/api/customers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newCust)
+    }).catch(() => {});
     resetCustomerForm();
     renderApp();
 
@@ -1232,6 +1243,7 @@ function deleteExpense(id) {
     appState.expenses = appState.expenses.filter(x => x.id !== id);
     saveState();
     renderApp();
+    fetch(`/api/expenses/${id}`, { method: 'DELETE' }).catch(() => {});
   }
 }
 
@@ -1280,11 +1292,36 @@ function initSettingsForm() {
   });
 }
 
+async function fetchStateFromBackend() {
+  try {
+    const res = await fetch('/api/state');
+    if (!res.ok) return;
+    const data = await res.json();
+
+    if (data.customers && data.customers.length > 0) appState.customers = data.customers;
+    if (data.records && data.records.length > 0) appState.records = data.records;
+    if (data.expenses && data.expenses.length > 0) appState.expenses = data.expenses;
+    if (data.rates && data.rates.cattle) appState.rates = data.rates;
+
+    saveState();
+    updateRatePreviews();
+    renderApp();
+  } catch (err) {
+    console.log('Backend API offline or unreachable; using local storage state.');
+  }
+}
+
 function saveState() {
   localStorage.setItem('farm_rates', JSON.stringify(appState.rates));
   localStorage.setItem('farm_customers', JSON.stringify(appState.customers));
   localStorage.setItem('farm_records', JSON.stringify(appState.records));
   localStorage.setItem('farm_expenses', JSON.stringify(appState.expenses));
+
+  fetch('/api/rates', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(appState.rates)
+  }).catch(() => {});
 }
 
 // Render Application UI & Totals
@@ -1482,6 +1519,7 @@ function deleteCustomer(id) {
     appState.customers = appState.customers.filter(c => c.id !== id);
     saveState();
     renderApp();
+    fetch(`/api/customers/${id}`, { method: 'DELETE' }).catch(() => {});
   }
 }
 
@@ -1831,6 +1869,7 @@ function deleteRecord(id) {
     appState.records = appState.records.filter(r => r.id !== id);
     saveState();
     renderApp();
+    fetch(`/api/records/${id}`, { method: 'DELETE' }).catch(() => {});
   }
 }
 
