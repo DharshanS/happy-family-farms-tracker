@@ -377,6 +377,62 @@
               </div>
             </div>
 
+            <!-- Custom Price Overrides Section -->
+            <div class="card glass-card" style="margin-bottom: 24px; border-left: 4px solid var(--amber-accent);">
+              <h3 class="section-title text-amber"><i class="fa-solid fa-tags"></i> Custom Price Overrides per Customer (Optional)</h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                Leave as 0 or empty to use global standard rates. Setting a price here overrides standard rates specifically for this customer.
+              </p>
+
+              <h4 style="font-size: 13px; color: var(--teal-accent); margin: 10px 0 6px 0;"><i class="fa-solid fa-cow"></i> Cow Milk Custom Rates (Rs.)</h4>
+              <div class="form-row bottle-inputs-grid">
+                <div class="form-group">
+                  <label for="customCattle175">175ml Rate</label>
+                  <input type="number" id="customCattle175" step="0.5" min="0" placeholder="Std: 15.00">
+                </div>
+                <div class="form-group">
+                  <label for="customCattle475">475ml Rate</label>
+                  <input type="number" id="customCattle475" step="0.5" min="0" placeholder="Std: 35.00">
+                </div>
+                <div class="form-group">
+                  <label for="customCattle500">500ml Rate</label>
+                  <input type="number" id="customCattle500" step="0.5" min="0" placeholder="Std: 38.00">
+                </div>
+                <div class="form-group">
+                  <label for="customCattle750">750ml Rate</label>
+                  <input type="number" id="customCattle750" step="0.5" min="0" placeholder="Std: 50.00">
+                </div>
+                <div class="form-group">
+                  <label for="customCattle1000">1000ml (1L) Rate</label>
+                  <input type="number" id="customCattle1000" step="0.5" min="0" placeholder="Std: 65.00">
+                </div>
+              </div>
+
+              <h4 style="font-size: 13px; color: var(--indigo-accent); margin: 14px 0 6px 0;"><i class="fa-solid fa-leaf"></i> Goat Milk Custom Rates (Rs.)</h4>
+              <div class="form-row bottle-inputs-grid">
+                <div class="form-group">
+                  <label for="customGoat175">175ml Rate</label>
+                  <input type="number" id="customGoat175" step="0.5" min="0" placeholder="Std: 25.00">
+                </div>
+                <div class="form-group">
+                  <label for="customGoat475">475ml Rate</label>
+                  <input type="number" id="customGoat475" step="0.5" min="0" placeholder="Std: 60.00">
+                </div>
+                <div class="form-group">
+                  <label for="customGoat500">500ml Rate</label>
+                  <input type="number" id="customGoat500" step="0.5" min="0" placeholder="Std: 65.00">
+                </div>
+                <div class="form-group">
+                  <label for="customGoat750">750ml Rate</label>
+                  <input type="number" id="customGoat750" step="0.5" min="0" placeholder="Std: 90.00">
+                </div>
+                <div class="form-group">
+                  <label for="customGoat1000">1000ml (1L) Rate</label>
+                  <input type="number" id="customGoat1000" step="0.5" min="0" placeholder="Std: 120.00">
+                </div>
+              </div>
+            </div>
+
             <div class="form-actions">
               <button type="submit" id="btnSubmitCustForm" class="btn btn-amber btn-lg">
                 <i class="fa-solid fa-floppy-disk"></i> Save & Register Customer
@@ -406,6 +462,7 @@
                   <th>Delivery Address / Route</th>
                   <th>Cow Defaults (175/475/500/750/1L)</th>
                   <th>Goat Defaults (175/475/500/750/1L)</th>
+                  <th>Custom Price Overrides</th>
                   <th>Total Litres</th>
                   <th>Total Revenue</th>
                   <th>Actions</th>

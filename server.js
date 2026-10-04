@@ -66,11 +66,20 @@ app.get('/api/customers', (req, res) => {
 
 app.post('/api/customers', (req, res) => {
   const c = req.body;
-  const query = `INSERT INTO customers VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+  const query = `INSERT INTO customers (
+    id, name, type, milkType, phone, address,
+    regCattle175, regCattle475, regCattle500, regCattle750, regCattle1000,
+    regGoat175, regGoat475, regGoat500, regGoat750, regGoat1000,
+    customCattle175, customCattle475, customCattle500, customCattle750, customCattle1000,
+    customGoat175, customGoat475, customGoat500, customGoat750, customGoat1000,
+    status
+  ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
   const params = [
     c.id, c.name, c.type, c.milkType, c.phone, c.address,
     c.regCattle175||0, c.regCattle475||0, c.regCattle500||0, c.regCattle750||0, c.regCattle1000||0,
     c.regGoat175||0, c.regGoat475||0, c.regGoat500||0, c.regGoat750||0, c.regGoat1000||0,
+    c.customCattle175||0, c.customCattle475||0, c.customCattle500||0, c.customCattle750||0, c.customCattle1000||0,
+    c.customGoat175||0, c.customGoat475||0, c.customGoat500||0, c.customGoat750||0, c.customGoat1000||0,
     c.status || 'Active'
   ];
   db.run(query, params, function(err) {
@@ -83,11 +92,15 @@ app.put('/api/customers/:id', (req, res) => {
   const c = req.body;
   const query = `UPDATE customers SET name=?, type=?, milkType=?, phone=?, address=?,
     regCattle175=?, regCattle475=?, regCattle500=?, regCattle750=?, regCattle1000=?,
-    regGoat175=?, regGoat475=?, regGoat500=?, regGoat750=?, regGoat1000=? WHERE id=?`;
+    regGoat175=?, regGoat475=?, regGoat500=?, regGoat750=?, regGoat1000=?,
+    customCattle175=?, customCattle475=?, customCattle500=?, customCattle750=?, customCattle1000=?,
+    customGoat175=?, customGoat475=?, customGoat500=?, customGoat750=?, customGoat1000=? WHERE id=?`;
   const params = [
     c.name, c.type, c.milkType, c.phone, c.address,
     c.regCattle175||0, c.regCattle475||0, c.regCattle500||0, c.regCattle750||0, c.regCattle1000||0,
     c.regGoat175||0, c.regGoat475||0, c.regGoat500||0, c.regGoat750||0, c.regGoat1000||0,
+    c.customCattle175||0, c.customCattle475||0, c.customCattle500||0, c.customCattle750||0, c.customCattle1000||0,
+    c.customGoat175||0, c.customGoat475||0, c.customGoat500||0, c.customGoat750||0, c.customGoat1000||0,
     req.params.id
   ];
   db.run(query, params, function(err) {

@@ -93,8 +93,26 @@ function initDB() {
       regGoat500 INTEGER DEFAULT 0,
       regGoat750 INTEGER DEFAULT 0,
       regGoat1000 INTEGER DEFAULT 0,
+      customCattle175 REAL DEFAULT 0,
+      customCattle475 REAL DEFAULT 0,
+      customCattle500 REAL DEFAULT 0,
+      customCattle750 REAL DEFAULT 0,
+      customCattle1000 REAL DEFAULT 0,
+      customGoat175 REAL DEFAULT 0,
+      customGoat475 REAL DEFAULT 0,
+      customGoat500 REAL DEFAULT 0,
+      customGoat750 REAL DEFAULT 0,
+      customGoat1000 REAL DEFAULT 0,
       status TEXT DEFAULT 'Active'
     )`);
+
+    const customCols = [
+      'customCattle175', 'customCattle475', 'customCattle500', 'customCattle750', 'customCattle1000',
+      'customGoat175', 'customGoat475', 'customGoat500', 'customGoat750', 'customGoat1000'
+    ];
+    customCols.forEach(col => {
+      db.run(`ALTER TABLE customers ADD COLUMN ${col} REAL DEFAULT 0`, () => {});
+    });
 
     db.run(`CREATE TABLE IF NOT EXISTS daily_records (
       id TEXT PRIMARY KEY,

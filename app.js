@@ -551,10 +551,47 @@ function initNavigation() {
   }
 }
 
+// Get Pricing Rates (Checks Customer Specific Custom Rates Overrides)
+function getCustomerRates(custNameOrId) {
+  const defaultCattle = (appState.rates && appState.rates.cattle) ? appState.rates.cattle : DEFAULT_RATES.cattle;
+  const defaultGoat = (appState.rates && appState.rates.goat) ? appState.rates.goat : DEFAULT_RATES.goat;
+  const defaultResult = { cattle: defaultCattle, goat: defaultGoat, hasCustom: false };
+
+  if (!custNameOrId) return defaultResult;
+
+  const norm = normalizeStr(custNameOrId);
+  const cust = appState.customers.find(c => c.id === custNameOrId || normalizeStr(c.name) === norm);
+  if (!cust) return defaultResult;
+
+  const cattle = {
+    rate175: (cust.customCattle175 && Number(cust.customCattle175) > 0) ? Number(cust.customCattle175) : defaultCattle.rate175,
+    rate475: (cust.customCattle475 && Number(cust.customCattle475) > 0) ? Number(cust.customCattle475) : defaultCattle.rate475,
+    rate500: (cust.customCattle500 && Number(cust.customCattle500) > 0) ? Number(cust.customCattle500) : defaultCattle.rate500,
+    rate750: (cust.customCattle750 && Number(cust.customCattle750) > 0) ? Number(cust.customCattle750) : defaultCattle.rate750,
+    rate1000: (cust.customCattle1000 && Number(cust.customCattle1000) > 0) ? Number(cust.customCattle1000) : defaultCattle.rate1000
+  };
+
+  const goat = {
+    rate175: (cust.customGoat175 && Number(cust.customGoat175) > 0) ? Number(cust.customGoat175) : defaultGoat.rate175,
+    rate475: (cust.customGoat475 && Number(cust.customGoat475) > 0) ? Number(cust.customGoat475) : defaultGoat.rate475,
+    rate500: (cust.customGoat500 && Number(cust.customGoat500) > 0) ? Number(cust.customGoat500) : defaultGoat.rate500,
+    rate750: (cust.customGoat750 && Number(cust.customGoat750) > 0) ? Number(cust.customGoat750) : defaultGoat.rate750,
+    rate1000: (cust.customGoat1000 && Number(cust.customGoat1000) > 0) ? Number(cust.customGoat1000) : defaultGoat.rate1000
+  };
+
+  const hasCustom = Boolean(
+    (cust.customCattle175 > 0) || (cust.customCattle475 > 0) || (cust.customCattle500 > 0) || (cust.customCattle750 > 0) || (cust.customCattle1000 > 0) ||
+    (cust.customGoat175 > 0) || (cust.customGoat475 > 0) || (cust.customGoat500 > 0) || (cust.customGoat750 > 0) || (cust.customGoat1000 > 0)
+  );
+
+  return { cattle, goat, hasCustom, cust };
+}
+
 // Update Rate Previews on Daily Form
-function updateRatePreviews() {
-  const cattle = (appState.rates && appState.rates.cattle) ? appState.rates.cattle : DEFAULT_RATES.cattle;
-  const goat = (appState.rates && appState.rates.goat) ? appState.rates.goat : DEFAULT_RATES.goat;
+function updateRatePreviews(custNameOrId) {
+  const ratesInfo = getCustomerRates(custNameOrId);
+  const cattle = ratesInfo.cattle;
+  const goat = ratesInfo.goat;
 
   const cp175 = document.getElementById('cattle_rate175Preview');
   const cp475 = document.getElementById('cattle_rate475Preview');
@@ -583,8 +620,9 @@ function updateRatePreviews() {
 
 // Calculate row calculations dynamically for Cattle Milk AND Goat Milk
 function calculateRecord(rec) {
-  const cattleRates = (appState.rates && appState.rates.cattle) ? appState.rates.cattle : DEFAULT_RATES.cattle;
-  const goatRates = (appState.rates && appState.rates.goat) ? appState.rates.goat : DEFAULT_RATES.goat;
+  const ratesInfo = getCustomerRates(rec.custName);
+  const cattleRates = ratesInfo.cattle;
+  const goatRates = ratesInfo.goat;
 
   const c175 = Number(rec.cattle_q175 || 0);
   const c475 = Number(rec.cattle_q475 || 0);
@@ -716,7 +754,17 @@ function initCustomerRegistrationForm() {
           regGoat475: Number(document.getElementById('regGoat475').value || 0),
           regGoat500: Number(document.getElementById('regGoat500').value || 0),
           regGoat750: Number(document.getElementById('regGoat750').value || 0),
-          regGoat1000: Number(document.getElementById('regGoat1000').value || 0)
+          regGoat1000: Number(document.getElementById('regGoat1000').value || 0),
+          customCattle175: Number(document.getElementById('customCattle175').value || 0),
+          customCattle475: Number(document.getElementById('customCattle475').value || 0),
+          customCattle500: Number(document.getElementById('customCattle500').value || 0),
+          customCattle750: Number(document.getElementById('customCattle750').value || 0),
+          customCattle1000: Number(document.getElementById('customCattle1000').value || 0),
+          customGoat175: Number(document.getElementById('customGoat175').value || 0),
+          customGoat475: Number(document.getElementById('customGoat475').value || 0),
+          customGoat500: Number(document.getElementById('customGoat500').value || 0),
+          customGoat750: Number(document.getElementById('customGoat750').value || 0),
+          customGoat1000: Number(document.getElementById('customGoat1000').value || 0)
         };
 
         saveState();
@@ -764,6 +812,16 @@ function initCustomerRegistrationForm() {
       regGoat500: Number(document.getElementById('regGoat500').value || 0),
       regGoat750: Number(document.getElementById('regGoat750').value || 0),
       regGoat1000: Number(document.getElementById('regGoat1000').value || 0),
+      customCattle175: Number(document.getElementById('customCattle175').value || 0),
+      customCattle475: Number(document.getElementById('customCattle475').value || 0),
+      customCattle500: Number(document.getElementById('customCattle500').value || 0),
+      customCattle750: Number(document.getElementById('customCattle750').value || 0),
+      customCattle1000: Number(document.getElementById('customCattle1000').value || 0),
+      customGoat175: Number(document.getElementById('customGoat175').value || 0),
+      customGoat475: Number(document.getElementById('customGoat475').value || 0),
+      customGoat500: Number(document.getElementById('customGoat500').value || 0),
+      customGoat750: Number(document.getElementById('customGoat750').value || 0),
+      customGoat1000: Number(document.getElementById('customGoat1000').value || 0),
       status: 'Active'
     };
 
@@ -793,6 +851,12 @@ function resetCustomerForm() {
   if (!custForm) return;
   if (document.getElementById('editingCustId')) document.getElementById('editingCustId').value = '';
   custForm.reset();
+
+  ['customCattle175', 'customCattle475', 'customCattle500', 'customCattle750', 'customCattle1000',
+   'customGoat175', 'customGoat475', 'customGoat500', 'customGoat750', 'customGoat1000'].forEach(id => {
+    const elem = document.getElementById(id);
+    if (elem) elem.value = '';
+  });
 
   const phoneNotice = document.getElementById('phoneValidationNotice');
   if (phoneNotice) phoneNotice.textContent = '';
@@ -826,6 +890,18 @@ function editCustomer(id) {
   document.getElementById('regGoat500').value = c.regGoat500 || 0;
   document.getElementById('regGoat750').value = c.regGoat750 || 0;
   document.getElementById('regGoat1000').value = c.regGoat1000 || 0;
+
+  document.getElementById('customCattle175').value = c.customCattle175 || '';
+  document.getElementById('customCattle475').value = c.customCattle475 || '';
+  document.getElementById('customCattle500').value = c.customCattle500 || '';
+  document.getElementById('customCattle750').value = c.customCattle750 || '';
+  document.getElementById('customCattle1000').value = c.customCattle1000 || '';
+
+  document.getElementById('customGoat175').value = c.customGoat175 || '';
+  document.getElementById('customGoat475').value = c.customGoat475 || '';
+  document.getElementById('customGoat500').value = c.customGoat500 || '';
+  document.getElementById('customGoat750').value = c.customGoat750 || '';
+  document.getElementById('customGoat1000').value = c.customGoat1000 || '';
 
   const titleElem = document.getElementById('custFormTitle');
   if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: var(--amber-accent);"></i> Edit Customer Details (${c.id})`;
@@ -934,8 +1010,10 @@ function resetDailyForm() {
 
 // Live calculation update across Cattle & Goat Milk bottle inputs
 function updateLiveCalc() {
-  const cattle = (appState.rates && appState.rates.cattle) ? appState.rates.cattle : DEFAULT_RATES.cattle;
-  const goat = (appState.rates && appState.rates.goat) ? appState.rates.goat : DEFAULT_RATES.goat;
+  const activeCustName = document.getElementById('custName')?.value || '';
+  const ratesInfo = getCustomerRates(activeCustName);
+  const cattle = ratesInfo.cattle;
+  const goat = ratesInfo.goat;
 
   const c175 = Number(document.getElementById('cattle_q175')?.value || 0);
   const c475 = Number(document.getElementById('cattle_q475')?.value || 0);
@@ -1485,6 +1563,25 @@ function renderCustomerDirectory(processedRecords) {
     const cattleDef = `${c.regCattle175 || 0}/${c.regCattle475 || 0}/${c.regCattle500 || 0}/${c.regCattle750 || 0}/${c.regCattle1000 || 0}`;
     const goatDef = `${c.regGoat175 || 0}/${c.regGoat475 || 0}/${c.regGoat500 || 0}/${c.regGoat750 || 0}/${c.regGoat1000 || 0}`;
 
+    const ratesInfo = getCustomerRates(c.id);
+    let customPriceHtml = `<span style="color: var(--text-muted); font-size: 11px;">Standard Rates</span>`;
+    if (ratesInfo.hasCustom) {
+      const customItems = [];
+      if (c.customCattle1000 > 0) customItems.push(`Cow 1L: Rs.${c.customCattle1000}`);
+      if (c.customCattle750 > 0) customItems.push(`Cow 750m: Rs.${c.customCattle750}`);
+      if (c.customCattle500 > 0) customItems.push(`Cow 500m: Rs.${c.customCattle500}`);
+      if (c.customCattle475 > 0) customItems.push(`Cow 475m: Rs.${c.customCattle475}`);
+      if (c.customCattle175 > 0) customItems.push(`Cow 175m: Rs.${c.customCattle175}`);
+
+      if (c.customGoat1000 > 0) customItems.push(`Goat 1L: Rs.${c.customGoat1000}`);
+      if (c.customGoat750 > 0) customItems.push(`Goat 750m: Rs.${c.customGoat750}`);
+      if (c.customGoat500 > 0) customItems.push(`Goat 500m: Rs.${c.customGoat500}`);
+      if (c.customGoat475 > 0) customItems.push(`Goat 475m: Rs.${c.customGoat475}`);
+      if (c.customGoat175 > 0) customItems.push(`Goat 175m: Rs.${c.customGoat175}`);
+
+      customPriceHtml = `<span class="badge-cust badge-weekly" style="font-size: 10px; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3);"><i class="fa-solid fa-tags"></i> Custom (${customItems.join(', ')})</span>`;
+    }
+
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><code>${c.id}</code></td>
@@ -1495,6 +1592,7 @@ function renderCustomerDirectory(processedRecords) {
       <td>${c.address}</td>
       <td style="font-size: 11px; color: var(--teal-accent);">${cattleDef}</td>
       <td style="font-size: 11px; color: var(--indigo-accent);">${goatDef}</td>
+      <td>${customPriceHtml}</td>
       <td><strong>${formatLitres(cLitres)}</strong></td>
       <td class="text-teal"><strong>${formatCurrency(cRev)}</strong></td>
       <td>
