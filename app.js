@@ -587,7 +587,7 @@ function getCustomerRates(custNameOrId) {
   return { cattle, goat, hasCustom, cust };
 }
 
-// Update Rate Previews on Daily Form
+// Update Rate Previews on Daily Form & Customer Registration Form Placeholders
 function updateRatePreviews(custNameOrId) {
   const ratesInfo = getCustomerRates(custNameOrId);
   const cattle = ratesInfo.cattle;
@@ -616,6 +616,34 @@ function updateRatePreviews(custNameOrId) {
   if (gp500) gp500.textContent = formatCurrency(goat.rate500);
   if (gp750) gp750.textContent = formatCurrency(goat.rate750);
   if (gp1000) gp1000.textContent = formatCurrency(goat.rate1000);
+
+  // Set default price placeholders in Customer Registration custom rate inputs
+  const stdCattle = (appState.rates && appState.rates.cattle) ? appState.rates.cattle : DEFAULT_RATES.cattle;
+  const stdGoat = (appState.rates && appState.rates.goat) ? appState.rates.goat : DEFAULT_RATES.goat;
+
+  const cc175 = document.getElementById('customCattle175');
+  const cc475 = document.getElementById('customCattle475');
+  const cc500 = document.getElementById('customCattle500');
+  const cc750 = document.getElementById('customCattle750');
+  const cc1000 = document.getElementById('customCattle1000');
+
+  if (cc175) cc175.placeholder = `Default: ${formatCurrency(stdCattle.rate175)}`;
+  if (cc475) cc475.placeholder = `Default: ${formatCurrency(stdCattle.rate475)}`;
+  if (cc500) cc500.placeholder = `Default: ${formatCurrency(stdCattle.rate500)}`;
+  if (cc750) cc750.placeholder = `Default: ${formatCurrency(stdCattle.rate750)}`;
+  if (cc1000) cc1000.placeholder = `Default: ${formatCurrency(stdCattle.rate1000)}`;
+
+  const cg175 = document.getElementById('customGoat175');
+  const cg475 = document.getElementById('customGoat475');
+  const cg500 = document.getElementById('customGoat500');
+  const cg750 = document.getElementById('customGoat750');
+  const cg1000 = document.getElementById('customGoat1000');
+
+  if (cg175) cg175.placeholder = `Default: ${formatCurrency(stdGoat.rate175)}`;
+  if (cg475) cg475.placeholder = `Default: ${formatCurrency(stdGoat.rate475)}`;
+  if (cg500) cg500.placeholder = `Default: ${formatCurrency(stdGoat.rate500)}`;
+  if (cg750) cg750.placeholder = `Default: ${formatCurrency(stdGoat.rate750)}`;
+  if (cg1000) cg1000.placeholder = `Default: ${formatCurrency(stdGoat.rate1000)}`;
 }
 
 // Calculate row calculations dynamically for Cattle Milk AND Goat Milk
