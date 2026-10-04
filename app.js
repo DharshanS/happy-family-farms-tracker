@@ -5,54 +5,62 @@ const DEFAULT_RATES = {
 };
 
 const SAMPLE_CUSTOMERS = [
-  { 
-    id: 'CUST-101', name: 'Dharshan', type: 'Daily Customer', milkType: 'Both (Cow & Goat)', phone: '0764805061', address: 'Route 1 - Green Valley',
-    regCattle175: 0, regCattle475: 1, regCattle500: 0, regCattle750: 2, regCattle1000: 1,
-    regGoat175: 1, regGoat475: 0, regGoat500: 1, regGoat750: 0, regGoat1000: 0, status: 'Active'
-  },
-  { 
-    id: 'CUST-102', name: 'Hotel Royal Milk Account', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: '9845012345', address: 'Main Street Market #45',
-    regCattle175: 10, regCattle475: 10, regCattle500: 5, regCattle750: 20, regCattle1000: 15,
-    regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active'
-  },
-  { 
-    id: 'CUST-103', name: 'Sita Lakshmi', type: 'Daily Customer', milkType: 'Goat Milk Only', phone: '9988776655', address: 'Route 2 - Lakeview Homes',
-    regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0,
-    regGoat175: 2, regGoat475: 1, regGoat500: 0, regGoat750: 1, regGoat1000: 0, status: 'Active'
-  },
-  { 
-    id: 'CUST-104', name: 'Green Park Canteen', type: 'Weekly Customer', milkType: 'Both (Cow & Goat)', phone: '0712345678', address: 'Route 3 - Park Avenue',
-    regCattle175: 5, regCattle475: 10, regCattle500: 5, regCattle750: 10, regCattle1000: 5,
-    regGoat175: 2, regGoat475: 2, regGoat500: 2, regGoat750: 2, regGoat1000: 2, status: 'Active'
-  }
+  { id: 'CUST-101', name: 'Dharshan', type: 'Daily Customer', milkType: 'Both (Cow & Goat)', phone: '0764805061', address: 'Route 1 - Green Valley', regCattle175: 0, regCattle475: 1, regCattle500: 0, regCattle750: 2, regCattle1000: 1, regGoat175: 1, regGoat475: 0, regGoat500: 1, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-102', name: 'Hotel Royal Milk Account', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: '9845012345', address: 'Main Street Market #45', regCattle175: 10, regCattle475: 10, regCattle500: 5, regCattle750: 20, regCattle1000: 15, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-103', name: 'Sita Lakshmi', type: 'Daily Customer', milkType: 'Goat Milk Only', phone: '9988776655', address: 'Route 2 - Lakeview Homes', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 2, regGoat475: 1, regGoat500: 0, regGoat750: 1, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-104', name: 'Green Park Canteen', type: 'Weekly Customer', milkType: 'Both (Cow & Goat)', phone: '0712345678', address: 'Route 3 - Park Avenue', regCattle175: 5, regCattle475: 10, regCattle500: 5, regCattle750: 10, regCattle1000: 5, regGoat175: 2, regGoat475: 2, regGoat500: 2, regGoat750: 2, regGoat1000: 2, status: 'Active' },
+  { id: 'CUST-105', name: 'Sittha', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Delivery Route 1', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-106', name: 'Gamini', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Delivery Route 1', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-107', name: 'Dada', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 7,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-108', name: 'Hardware', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 8,100)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-109', name: 'Logeshwaran', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 4,200)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-110', name: 'Safras', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 3,000)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-111', name: 'Ranga', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 3,000)', regCattle175: 0, regCattle475: 0, regCattle500: 1, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-112', name: 'Nithya', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Delivery Route 2', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-113', name: 'Pramod Sharma', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 14,400)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-114', name: 'Mahaiyyawa', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Mahaiyyawa Route (Paid: Rs. 600)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 2, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-115', name: 'Arupola Hotel', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Arupola Route (Paid: Rs. 350)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-116', name: 'Karthik', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Town Route (Paid: Rs. 300)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-117', name: 'Sathosa Thenna', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 7,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-118', name: 'Keerthana', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 7,200)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 1, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-119', name: 'Helabojun', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Daily Spot (Paid: Rs. 1,200)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-120', name: 'Ayurveda', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Daily Spot (Paid: Rs. 300)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-121', name: 'Lakeside', type: 'Daily Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Lakeside Route', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-122', name: 'Praveen', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 9,000)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-123', name: 'Lekraj', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 4,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-124', name: 'Nursery 2', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 4,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-125', name: 'Mahendran', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 12,000)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-126', name: 'Ravi Ranjan Pandit', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 8,700)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-127', name: 'Wijesoriya', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 8,100)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-128', name: 'Vinayagamoorthy', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 7,800)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-129', name: 'Aadithya', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 15,600)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-130', name: 'Selvanayagi', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 4,500)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-131', name: 'Jeyachandrika', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 3,300)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-132', name: 'Yogesh', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 23,400)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' },
+  { id: 'CUST-133', name: 'Uthpala Wickramasinghe', type: 'Monthly Customer', milkType: 'Cow Milk Only', phone: 'N/A', address: 'Monthly Account (Bill: Rs. 8,100)', regCattle175: 0, regCattle475: 0, regCattle500: 0, regCattle750: 0, regCattle1000: 0, regGoat175: 0, regGoat475: 0, regGoat500: 0, regGoat750: 0, regGoat1000: 0, status: 'Active' }
 ];
 
 const SAMPLE_EXPENSES = [
   { id: 'EXP-101', date: '2026-09-01', category: 'Silage', name: 'Green Fodder Supplier', amount: 1200.00, remarks: 'Silage tractor load' },
   { id: 'EXP-102', date: '2026-09-01', category: 'Grass Cutter Wage', name: 'Murugan (Worker)', amount: 600.00, remarks: 'Daily grass cutting wage' },
   { id: 'EXP-103', date: '2026-09-01', category: 'Feed / Punnaku', name: 'Lakshmi Feed Store', amount: 450.00, remarks: '50kg Oil cake bag' },
-  { id: 'EXP-104', date: '2026-09-01', category: 'Other Expense', name: 'Veterinary Doctor', amount: 100.00, remarks: 'Cattle health checkup' },
-  { id: 'EXP-105', date: '2026-09-02', category: 'Grass Cutter Wage', name: 'Murugan (Worker)', amount: 600.00, remarks: 'Daily wage' }
+  { id: 'EXP-104', date: '2026-09-01', category: 'Other Expense', name: 'Veterinary Doctor', amount: 100.00, remarks: 'Cow health checkup' },
+  { id: 'EXP-105', date: '2026-09-02', category: 'Grass Cutter Wage', name: 'Murugan (Worker)', amount: 600.00, remarks: 'Daily wage' },
+  { id: 'EXP-106', date: '2026-10-05', category: 'Other Expense', name: 'Baticol', amount: 3500.00, remarks: 'Baticol farm expense' }
 ];
 
 const SAMPLE_RECORDS = [
+  { 
+    id: 'rec-2026-10-05', date: '2026-10-05', custType: 'Daily Customer', custName: 'Route Sales & Cash Collections (28.5 Bottles)', paymentStatus: 'Paid', amountPaid: 5440.00,
+    cattle_q175: 0, cattle_q475: 0, cattle_q500: 1, cattle_q750: 0, cattle_q1000: 28,
+    goat_q175: 0, goat_q475: 0, goat_q500: 0, goat_q750: 0, goat_q1000: 0,
+    silage: 0, wage: 0, feed: 0, other: 3500, remarks: '28.5 Bottles total. Revenue Rs. 5440 (including yesterday balance Rs. 2590 & collections Helabojun 1200, Goat 100, Ayurveda 300, Mahaiyyawa 600, Arupola 350, Karthik 300). Less Baticol expense Rs. 3500 -> Net Balance Rs. 1940' 
+  },
   { 
     id: 'rec-2026-09-07', date: '2026-09-07', custType: 'Daily Customer', custName: 'Dharshan & Spot Sales', paymentStatus: 'Paid', amountPaid: 5790.00,
     cattle_q175: 10, cattle_q475: 20, cattle_q500: 15, cattle_q750: 44, cattle_q1000: 34,
     goat_q175: 4, goat_q475: 6, goat_q500: 5, goat_q750: 10, goat_q1000: 2,
     silage: 0, wage: 600, feed: 460, other: 0, remarks: 'Today total farm record (Cow & Goat Milk)' 
-  },
-  { 
-    id: 'rec-2026-09-06', date: '2026-09-06', custType: 'Weekly Customer', custName: 'Green Park Canteen & Sita Lakshmi', paymentStatus: 'Partial', amountPaid: 1500.00,
-    cattle_q175: 12, cattle_q475: 15, cattle_q500: 10, cattle_q750: 20, cattle_q1000: 10,
-    goat_q175: 12, goat_q475: 10, goat_q500: 8, goat_q750: 15, goat_q1000: 5,
-    silage: 0, wage: 600, feed: 450, other: 0, remarks: 'Partial cash payment received (Rs. 1500 paid, balance pending)' 
-  },
-  { 
-    id: 'rec-2026-09-05', date: '2026-09-05', custType: 'Time-Being', custName: 'Event & Walk-ins', paymentStatus: 'Paid', amountPaid: 3500.00,
-    cattle_q175: 5, cattle_q475: 32, cattle_q500: 10, cattle_q750: 42, cattle_q1000: 30,
-    goat_q175: 0, goat_q475: 0, goat_q500: 0, goat_q750: 0, goat_q1000: 0,
-    silage: 0, wage: 650, feed: 480, other: 120, remarks: 'Cutter overtime wage' 
   }
 ];
 
