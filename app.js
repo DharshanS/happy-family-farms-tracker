@@ -1496,7 +1496,7 @@ function renderApp() {
   (appState.expenses || []).forEach(exp => {
     const amt = Number(exp.amount || 0);
     if (exp.category === 'Silage') silageTot += amt;
-    else if (exp.category === 'Grass Cutter Wage') wageTot += amt;
+    else if (exp.category === 'Grass Cutter Wage' || exp.category === 'Daily Wage / Salary') wageTot += amt;
     else if (exp.category === 'Feed / Punnaku') feedTot += amt;
     else otherTot += amt;
   });

@@ -54,7 +54,7 @@ const SAMPLE_EXPENSES = [
   { id: 'EXP-102', date: '2026-09-01', category: 'Grass Cutter Wage', name: 'Murugan (Worker)', amount: 600.00, remarks: 'Daily grass cutting wage' },
   { id: 'EXP-103', date: '2026-09-01', category: 'Feed / Punnaku', name: 'Lakshmi Feed Store', amount: 450.00, remarks: '50kg Oil cake bag' },
   { id: 'EXP-104', date: '2026-09-01', category: 'Other Expense', name: 'Veterinary Doctor', amount: 100.00, remarks: 'Cow health checkup' },
-  { id: 'EXP-105', date: '2026-09-02', category: 'Grass Cutter Wage', name: 'Murugan (Worker)', amount: 600.00, remarks: 'Daily wage' },
+  { id: 'EXP-105', date: '2026-09-02', category: 'Daily Wage / Salary', name: 'Murugan (Worker)', amount: 600.00, remarks: 'Worker daily wage salary' },
   { id: 'EXP-106', date: '2026-10-05', category: 'Other Expense', name: 'Baticol', amount: 3500.00, remarks: 'Baticol farm expense' }
 ];
 
