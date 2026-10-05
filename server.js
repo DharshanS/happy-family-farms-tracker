@@ -29,7 +29,7 @@ app.post('/api/auth/login', (req, res) => {
   }
 });
 
-// GET FULL STATE (Customers, Records, Expenses, Rates)
+// GET FULL STATE (Customers, Records, Expenses, Rates, Employees, Employee Payments)
 app.get('/api/state', (req, res) => {
   db.serialize(() => {
     db.all(`SELECT * FROM customers`, [], (err, customers) => {
@@ -40,19 +40,85 @@ app.get('/api/state', (req, res) => {
           if (err) return res.status(500).json({ error: err.message });
           db.all(`SELECT * FROM rates`, [], (err, ratesRows) => {
             if (err) return res.status(500).json({ error: err.message });
-            
-            const rates = { cattle: {}, goat: {} };
-            ratesRows.forEach(r => {
-              rates[r.category] = {
-                rate175: r.rate175, rate475: r.rate475, rate500: r.rate500, rate750: r.rate750, rate1000: r.rate1000
-              };
-            });
+            db.all(`SELECT * FROM employees`, [], (err, employees) => {
+              if (err) return res.status(500).json({ error: err.message });
+              db.all(`SELECT * FROM employee_payments ORDER BY date DESC`, [], (err, employeePayments) => {
+                if (err) return res.status(500).json({ error: err.message });
+                
+                const rates = { cattle: {}, goat: {} };
+                ratesRows.forEach(r => {
+                  rates[r.category] = {
+                    rate175: r.rate175, rate475: r.rate475, rate500: r.rate500, rate750: r.rate750, rate1000: r.rate1000
+                  };
+                });
 
-            res.json({ customers, records, expenses, rates });
+                res.json({ customers, records, expenses, rates, employees, employeePayments });
+              });
+            });
           });
         });
       });
     });
+  });
+});
+
+// EMPLOYEES API
+app.get('/api/employees', (req, res) => {
+  db.all(`SELECT * FROM employees`, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.post('/api/employees', (req, res) => {
+  const e = req.body;
+  const query = `INSERT INTO employees VALUES (?,?,?,?,?,?,?,?)`;
+  const params = [e.id, e.name, e.phone || 'N/A', e.designation, e.payType, e.baseSalary || 0, e.joinedDate || '', e.status || 'Active'];
+  db.run(query, params, function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ success: true, employee: e });
+  });
+});
+
+app.put('/api/employees/:id', (req, res) => {
+  const e = req.body;
+  const query = `UPDATE employees SET name=?, phone=?, designation=?, payType=?, baseSalary=?, joinedDate=?, status=? WHERE id=?`;
+  const params = [e.name, e.phone || 'N/A', e.designation, e.payType, e.baseSalary || 0, e.joinedDate || '', e.status || 'Active', req.params.id];
+  db.run(query, params, function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ success: true });
+  });
+});
+
+app.delete('/api/employees/:id', (req, res) => {
+  db.run(`DELETE FROM employees WHERE id=?`, [req.params.id], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ success: true });
+  });
+});
+
+// EMPLOYEE PAYMENTS API
+app.get('/api/employee-payments', (req, res) => {
+  db.all(`SELECT * FROM employee_payments ORDER BY date DESC`, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.post('/api/employee-payments', (req, res) => {
+  const p = req.body;
+  const query = `INSERT INTO employee_payments VALUES (?,?,?,?,?,?,?,?)`;
+  const params = [p.id, p.empId, p.empName, p.date, p.payType, p.amount, p.paymentMethod || 'Cash', p.remarks || ''];
+  db.run(query, params, function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ success: true, payment: p });
+  });
+});
+
+app.delete('/api/employee-payments/:id', (req, res) => {
+  db.run(`DELETE FROM employee_payments WHERE id=?`, [req.params.id], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ success: true });
   });
 });
 

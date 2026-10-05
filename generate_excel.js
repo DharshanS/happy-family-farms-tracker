@@ -415,6 +415,41 @@ async function buildFarmExcelWorkbook() {
     r.eachCell((cell) => cell.border = thinBorder);
   });
 
+  // ----------------------------------------------------
+  // SHEET 7: Employee & Salary Master
+  // ----------------------------------------------------
+  const empSheet = workbook.addWorksheet('Employee Master', { views: [{ showGridLines: true }] });
+  empSheet.columns = [
+    { header: 'Employee ID', key: 'id', width: 16 },
+    { header: 'Employee Name', key: 'name', width: 28 },
+    { header: 'Job Designation', key: 'designation', width: 24 },
+    { header: 'Phone Number', key: 'phone', width: 18 },
+    { header: 'Pay Structure', key: 'payType', width: 18 },
+    { header: 'Base Rate / Salary (Rs.)', key: 'baseSalary', width: 22 },
+    { header: 'Joined Date', key: 'joinedDate', width: 16 },
+    { header: 'Status', key: 'status', width: 14 }
+  ];
+
+  empSheet.getRow(1).height = 28;
+  empSheet.getRow(1).eachCell((cell) => {
+    cell.fill = primaryHeaderFill;
+    cell.font = headerFont;
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  });
+
+  const sampleEmployees = [
+    ['EMP-101', 'Murugan Worker', 'Grass Cutter & Laborer', '0771234567', 'Daily Wage', 600.00, '2026-01-15', 'Active'],
+    ['EMP-102', 'Praveen', 'Farm Herdsman', '0779876543', 'Monthly Salary', 25000.00, '2026-02-01', 'Active'],
+    ['EMP-103', 'Ravi', 'Milker & Farm Worker', '0751122334', 'Daily Wage', 750.00, '2026-03-10', 'Active']
+  ];
+
+  sampleEmployees.forEach((row) => {
+    const r = empSheet.addRow(row);
+    r.height = 20;
+    r.getCell(6).numFmt = currencyFmt;
+    r.eachCell((cell) => cell.border = thinBorder);
+  });
+
   const filePath1 = path.join('/home/dharshan/.gemini/antigravity/scratch/farm_expense_tracker', 'Happy_Family_Farms_Expense_And_Revenue_Tracker.xlsx');
   const filePath2 = path.join('/home/dharshan/.gemini/antigravity/scratch/farm_expense_tracker', 'Farm_Expenses_And_Revenue_Tracker.xlsx');
   await workbook.xlsx.writeFile(filePath1);

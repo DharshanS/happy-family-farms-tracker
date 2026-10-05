@@ -73,6 +73,17 @@ const SAMPLE_RECORDS = [
   }
 ];
 
+const SAMPLE_EMPLOYEES = [
+  { id: 'EMP-101', name: 'Murugan', phone: '0771234567', designation: 'Grass Cutter & Laborer', payType: 'Daily Wage', baseSalary: 600.00, joinedDate: '2026-01-15', status: 'Active' },
+  { id: 'EMP-102', name: 'Praveen', phone: '0779876543', designation: 'Farm Herdsman', payType: 'Monthly Salary', baseSalary: 25000.00, joinedDate: '2026-02-01', status: 'Active' },
+  { id: 'EMP-103', name: 'Ravi', phone: '0751122334', designation: 'Milker & Farm Worker', payType: 'Daily Wage', baseSalary: 750.00, joinedDate: '2026-03-10', status: 'Active' }
+];
+
+const SAMPLE_EMPLOYEE_PAYMENTS = [
+  { id: 'PAY-101', empId: 'EMP-101', empName: 'Murugan', date: '2026-09-01', payType: 'Daily Wage / Salary', amount: 600.00, paymentMethod: 'Cash', remarks: 'Daily grass cutting wage' },
+  { id: 'PAY-102', empId: 'EMP-101', empName: 'Murugan', date: '2026-09-02', payType: 'Daily Wage / Salary', amount: 600.00, paymentMethod: 'Cash', remarks: 'Worker daily wage salary' }
+];
+
 function initDB() {
   db.serialize(() => {
     // 1. Tables
@@ -156,6 +167,28 @@ function initDB() {
       rate1000 REAL
     )`);
 
+    db.run(`CREATE TABLE IF NOT EXISTS employees (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      phone TEXT,
+      designation TEXT NOT NULL,
+      payType TEXT NOT NULL,
+      baseSalary REAL DEFAULT 0.0,
+      joinedDate TEXT,
+      status TEXT DEFAULT 'Active'
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS employee_payments (
+      id TEXT PRIMARY KEY,
+      empId TEXT NOT NULL,
+      empName TEXT NOT NULL,
+      date TEXT NOT NULL,
+      payType TEXT NOT NULL,
+      amount REAL NOT NULL,
+      paymentMethod TEXT DEFAULT 'Cash',
+      remarks TEXT
+    )`);
+
     // 2. Seed Default Rates if empty
     db.get(`SELECT COUNT(*) AS count FROM rates`, (err, row) => {
       if (!err && row.count === 0) {
@@ -169,9 +202,9 @@ function initDB() {
     // 3. Seed Default Customers if empty
     db.get(`SELECT COUNT(*) AS count FROM customers`, (err, row) => {
       if (!err && row.count === 0) {
-        const stmt = db.prepare(`INSERT INTO customers VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+        const stmt = db.prepare(`INSERT INTO customers VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
         SAMPLE_CUSTOMERS.forEach(c => {
-          stmt.run([c.id, c.name, c.type, c.milkType, c.phone, c.address, c.regCattle175, c.regCattle475, c.regCattle500, c.regCattle750, c.regCattle1000, c.regGoat175, c.regGoat475, c.regGoat500, c.regGoat750, c.regGoat1000, c.status]);
+          stmt.run([c.id, c.name, c.type, c.milkType, c.phone, c.address, c.regCattle175||0, c.regCattle475||0, c.regCattle500||0, c.regCattle750||0, c.regCattle1000||0, c.regGoat175||0, c.regGoat475||0, c.regGoat500||0, c.regGoat750||0, c.regGoat1000||0, c.customCattle175||0, c.customCattle475||0, c.customCattle500||0, c.customCattle750||0, c.customCattle1000||0, c.customGoat175||0, c.customGoat475||0, c.customGoat500||0, c.customGoat750||0, c.customGoat1000||0, c.status]);
         });
         stmt.finalize();
       }
@@ -194,6 +227,28 @@ function initDB() {
         const stmt = db.prepare(`INSERT INTO daily_records VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
         SAMPLE_RECORDS.forEach(r => {
           stmt.run([r.id, r.date, r.custType, r.custName, r.paymentStatus, r.amountPaid, r.cattle_q175, r.cattle_q475, r.cattle_q500, r.cattle_q750, r.cattle_q1000, r.goat_q175, r.goat_q475, r.goat_q500, r.goat_q750, r.goat_q1000, r.silage, r.wage, r.feed, r.other, r.remarks]);
+        });
+        stmt.finalize();
+      }
+    });
+
+    // 6. Seed Default Employees if empty
+    db.get(`SELECT COUNT(*) AS count FROM employees`, (err, row) => {
+      if (!err && row.count === 0) {
+        const stmt = db.prepare(`INSERT INTO employees VALUES (?,?,?,?,?,?,?,?)`);
+        SAMPLE_EMPLOYEES.forEach(emp => {
+          stmt.run([emp.id, emp.name, emp.phone, emp.designation, emp.payType, emp.baseSalary, emp.joinedDate, emp.status]);
+        });
+        stmt.finalize();
+      }
+    });
+
+    // 7. Seed Default Employee Payments if empty
+    db.get(`SELECT COUNT(*) AS count FROM employee_payments`, (err, row) => {
+      if (!err && row.count === 0) {
+        const stmt = db.prepare(`INSERT INTO employee_payments VALUES (?,?,?,?,?,?,?,?)`);
+        SAMPLE_EMPLOYEE_PAYMENTS.forEach(p => {
+          stmt.run([p.id, p.empId, p.empName, p.date, p.payType, p.amount, p.paymentMethod, p.remarks]);
         });
         stmt.finalize();
       }

@@ -67,10 +67,21 @@ const SAMPLE_RECORDS = [
   }
 ];
 
+const SAMPLE_EMPLOYEES = [
+  { id: 'EMP-101', name: 'Murugan', phone: '0771234567', designation: 'Grass Cutter & Laborer', payType: 'Daily Wage', baseSalary: 600.00, joinedDate: '2026-01-15', status: 'Active' },
+  { id: 'EMP-102', name: 'Praveen', phone: '0779876543', designation: 'Farm Herdsman', payType: 'Monthly Salary', baseSalary: 25000.00, joinedDate: '2026-02-01', status: 'Active' },
+  { id: 'EMP-103', name: 'Ravi', phone: '0751122334', designation: 'Milker & Farm Worker', payType: 'Daily Wage', baseSalary: 750.00, joinedDate: '2026-03-10', status: 'Active' }
+];
+
+const SAMPLE_EMPLOYEE_PAYMENTS = [
+  { id: 'PAY-101', empId: 'EMP-101', empName: 'Murugan', date: '2026-09-01', payType: 'Daily Wage / Salary', amount: 600.00, paymentMethod: 'Cash', remarks: 'Daily grass cutting wage' },
+  { id: 'PAY-102', empId: 'EMP-101', empName: 'Murugan', date: '2026-09-02', payType: 'Daily Wage / Salary', amount: 600.00, paymentMethod: 'Cash', remarks: 'Worker daily wage salary' }
+];
+
 const USER_ACCOUNTS = [
-  { username: 'admin', password: 'admin123', name: 'Dharshan (Admin)', role: 'Admin', icon: '👑', color: '#10b981', allowedTabs: ['dashboard', 'customers', 'expenses', 'daily-entry', 'records', 'settings'] },
-  { username: 'sales', password: 'sales123', name: 'Sales Representative', role: 'Sales', icon: '💼', color: '#f59e0b', allowedTabs: ['dashboard', 'customers', 'daily-entry', 'records'] },
-  { username: 'operator', password: 'op123', name: 'Farm Operator', role: 'Operator', icon: '🚜', color: '#6366f1', allowedTabs: ['daily-entry', 'expenses'] }
+  { username: 'admin', password: 'admin123', name: 'Dharshan (Admin)', role: 'Admin', icon: '👑', color: '#10b981', allowedTabs: ['dashboard', 'customers', 'expenses', 'employees', 'daily-entry', 'records', 'settings'] },
+  { username: 'sales', password: 'sales123', name: 'Sales Representative', role: 'Sales', icon: '💼', color: '#f59e0b', allowedTabs: ['dashboard', 'customers', 'employees', 'daily-entry', 'records'] },
+  { username: 'operator', password: 'op123', name: 'Farm Operator', role: 'Operator', icon: '🚜', color: '#6366f1', allowedTabs: ['daily-entry', 'expenses', 'employees'] }
 ];
 
 function getStoredArray(key, fallback) {
@@ -89,7 +100,9 @@ let appState = {
   rates: JSON.parse(localStorage.getItem('farm_rates')) || DEFAULT_RATES,
   customers: getStoredArray('farm_customers', []),
   records: getStoredArray('farm_records', SAMPLE_RECORDS),
-  expenses: getStoredArray('farm_expenses', SAMPLE_EXPENSES)
+  expenses: getStoredArray('farm_expenses', SAMPLE_EXPENSES),
+  employees: getStoredArray('farm_employees', SAMPLE_EMPLOYEES),
+  employeePayments: getStoredArray('farm_employee_payments', SAMPLE_EMPLOYEE_PAYMENTS)
 };
 
 // Customer list starts clean for user data entry
@@ -233,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFormListeners();
   initCustomerRegistrationForm();
   initStandaloneExpenseForm();
+  initEmployeeForms();
   initSettingsForm();
   updateRatePreviews();
   renderApp();
@@ -1364,6 +1378,296 @@ function deleteExpense(id) {
   }
 }
 
+// Employee Registration & Salary Payout Logic
+function initEmployeeForms() {
+  const empForm = document.getElementById('employeeForm');
+  const payForm = document.getElementById('employeePaymentForm');
+
+  const today = new Date().toISOString().split('T')[0];
+  const payDateInput = document.getElementById('payDate');
+  if (payDateInput && !payDateInput.value) {
+    payDateInput.value = today;
+  }
+  const empJoinedInput = document.getElementById('empJoinedDate');
+  if (empJoinedInput && !empJoinedInput.value) {
+    empJoinedInput.value = today;
+  }
+
+  // Form 1: Employee Profile Master
+  if (empForm) {
+    empForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const editingId = document.getElementById('editingEmpId').value;
+      const name = document.getElementById('empName').value.trim();
+      const phone = document.getElementById('empPhone').value.trim() || 'N/A';
+      const designation = document.getElementById('empDesignation').value;
+      const payType = document.getElementById('empPayType').value;
+      const baseSalary = Number(document.getElementById('empBaseSalary').value || 0);
+      const joinedDate = document.getElementById('empJoinedDate').value || today;
+      const status = document.getElementById('empStatus').value || 'Active';
+
+      if (!name || baseSalary < 0) {
+        alert('⚠️ Please provide a valid employee name and base rate.');
+        return;
+      }
+
+      if (editingId) {
+        const idx = appState.employees.findIndex(x => x.id === editingId);
+        if (idx !== -1) {
+          appState.employees[idx] = {
+            ...appState.employees[idx],
+            name, phone, designation, payType, baseSalary, joinedDate, status
+          };
+          fetch(`/api/employees/${editingId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(appState.employees[idx])
+          }).catch(() => {});
+          alert(`✅ Employee Profile (${name}) Updated Successfully!`);
+        }
+      } else {
+        const newEmp = {
+          id: 'EMP-' + Math.floor(100 + Math.random() * 900),
+          name, phone, designation, payType, baseSalary, joinedDate, status
+        };
+        appState.employees.unshift(newEmp);
+        fetch('/api/employees', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newEmp)
+        }).catch(() => {});
+        alert(`✅ New Employee (${name}) Registered Successfully!`);
+      }
+
+      saveState();
+      resetEmployeeForm();
+      renderApp();
+    });
+
+    const btnReset = document.getElementById('btnResetEmpForm');
+    if (btnReset) {
+      btnReset.addEventListener('click', resetEmployeeForm);
+    }
+  }
+
+  // Form 2: Salary Payment & Worker Wage Entry
+  if (payForm) {
+    const selectEmp = document.getElementById('paySelectEmp');
+    if (selectEmp) {
+      selectEmp.addEventListener('change', () => {
+        const empId = selectEmp.value;
+        const emp = appState.employees.find(x => x.id === empId);
+        if (emp) {
+          document.getElementById('payAmount').value = emp.baseSalary || '';
+          document.getElementById('payRemarks').value = `${emp.payType} payout for ${emp.name}`;
+        }
+      });
+    }
+
+    payForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const empId = document.getElementById('paySelectEmp').value;
+      const payDate = document.getElementById('payDate').value || today;
+      const payCategory = document.getElementById('payCategory').value;
+      const amount = Number(document.getElementById('payAmount').value || 0);
+      const method = document.getElementById('payMethod').value;
+      const remarks = document.getElementById('payRemarks').value.trim();
+
+      const emp = appState.employees.find(x => x.id === empId);
+      const empName = emp ? emp.name : 'Worker';
+
+      if (!empId || amount <= 0) {
+        alert('⚠️ Please select an employee and enter an amount greater than Rs. 0.00');
+        return;
+      }
+
+      const newPay = {
+        id: 'PAY-' + Math.floor(100 + Math.random() * 900),
+        empId,
+        empName,
+        date: payDate,
+        payType: payCategory,
+        amount,
+        paymentMethod: method,
+        remarks: remarks || `${payCategory} payout for ${empName}`
+      };
+
+      appState.employeePayments.unshift(newPay);
+      fetch('/api/employee-payments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPay)
+      }).catch(() => {});
+
+      // Auto-link to Operating Expense Directory under 'Daily Wage / Salary'
+      const linkedExp = {
+        id: 'EXP-' + Math.floor(100 + Math.random() * 900),
+        date: payDate,
+        category: 'Daily Wage / Salary',
+        name: empName,
+        amount,
+        remarks: remarks || `Salary payout for ${empName} (${payCategory})`
+      };
+      appState.expenses.unshift(linkedExp);
+      fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(linkedExp)
+      }).catch(() => {});
+
+      saveState();
+      alert(`✅ Salary Payment of Rs. ${amount.toFixed(2)} for ${empName} Recorded & Linked to Expenses!`);
+      
+      payForm.reset();
+      document.getElementById('payDate').value = today;
+      renderApp();
+    });
+  }
+}
+
+function resetEmployeeForm() {
+  const form = document.getElementById('employeeForm');
+  if (!form) return;
+  document.getElementById('editingEmpId').value = '';
+  form.reset();
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('empJoinedDate').value = today;
+  document.getElementById('empFormTitle').innerHTML = `<i class="fa-solid fa-user-gear"></i> Employee Registration & Profile Master`;
+  document.getElementById('btnSubmitEmpForm').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Register Employee Profile`;
+}
+
+function renderEmployeesDirectory() {
+  const tbody = document.getElementById('empTableBody');
+  const selectEmp = document.getElementById('paySelectEmp');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  if (selectEmp) {
+    const currentVal = selectEmp.value;
+    selectEmp.innerHTML = '<option value="">-- Select Employee --</option>';
+    appState.employees.forEach(emp => {
+      const opt = document.createElement('option');
+      opt.value = emp.id;
+      opt.textContent = `${emp.name} (${emp.designation} - ${emp.payType}: Rs.${emp.baseSalary})`;
+      selectEmp.appendChild(opt);
+    });
+    selectEmp.value = currentVal;
+  }
+
+  if (!appState.employees || appState.employees.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 24px; color: var(--text-muted);">No employees registered yet.</td></tr>`;
+    return;
+  }
+
+  appState.employees.forEach(emp => {
+    let totPaid = 0;
+    (appState.employeePayments || []).forEach(p => {
+      if (p.empId === emp.id) totPaid += Number(p.amount || 0);
+    });
+
+    const statusBadge = emp.status === 'Active' 
+      ? `<span class="badge-cust badge-daily"><i class="fa-solid fa-circle-check"></i> Active</span>`
+      : `<span class="badge-cust badge-timebeing"><i class="fa-solid fa-circle-pause"></i> Inactive</span>`;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><code>${emp.id}</code></td>
+      <td><strong>${emp.name}</strong></td>
+      <td>${emp.designation}</td>
+      <td>${emp.phone || 'N/A'}</td>
+      <td><span class="badge-cust badge-weekly">${emp.payType}</span></td>
+      <td class="text-teal"><strong>${formatCurrency(emp.baseSalary)}</strong></td>
+      <td>${emp.joinedDate || '-'}</td>
+      <td>${statusBadge}</td>
+      <td class="text-rose"><strong>${formatCurrency(totPaid)}</strong></td>
+      <td>
+        <div class="action-buttons">
+          <button class="btn-action btn-edit" onclick="editEmployee('${emp.id}')" title="Edit Employee Profile">
+            <i class="fa-solid fa-pen-to-square"></i> Edit
+          </button>
+          <button class="btn-action btn-delete" onclick="deleteEmployee('${emp.id}')" title="Delete Employee">
+            <i class="fa-solid fa-trash-can"></i> Delete
+          </button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderEmployeePaymentsDirectory() {
+  const tbody = document.getElementById('empPayTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  if (!appState.employeePayments || appState.employeePayments.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 24px; color: var(--text-muted);">No employee payments recorded yet.</td></tr>`;
+    return;
+  }
+
+  appState.employeePayments.forEach(pay => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><code>${pay.id}</code></td>
+      <td><strong>${pay.date}</strong></td>
+      <td><strong>${pay.empName}</strong></td>
+      <td><span class="badge-cust badge-monthly">${pay.payType}</span></td>
+      <td class="text-rose"><strong>${formatCurrency(pay.amount)}</strong></td>
+      <td>${pay.paymentMethod || 'Cash'}</td>
+      <td>${pay.remarks || '-'}</td>
+      <td>
+        <div class="action-buttons">
+          <button class="btn-action btn-delete" onclick="deleteEmployeePayment('${pay.id}')" title="Delete Payment Record">
+            <i class="fa-solid fa-trash-can"></i> Delete
+          </button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function editEmployee(id) {
+  const emp = appState.employees.find(x => x.id === id);
+  if (!emp) return;
+
+  document.getElementById('editingEmpId').value = emp.id;
+  document.getElementById('empName').value = emp.name;
+  document.getElementById('empPhone').value = emp.phone || '';
+  document.getElementById('empDesignation').value = emp.designation;
+  document.getElementById('empPayType').value = emp.payType;
+  document.getElementById('empBaseSalary').value = emp.baseSalary;
+  document.getElementById('empJoinedDate').value = emp.joinedDate || '';
+  document.getElementById('empStatus').value = emp.status || 'Active';
+
+  document.getElementById('empFormTitle').innerHTML = `<i class="fa-solid fa-user-pen" style="color: var(--teal-accent);"></i> Edit Employee Profile (${emp.id})`;
+  document.getElementById('btnSubmitEmpForm').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Update Employee Profile`;
+
+  const empTab = document.querySelector('[data-tab="employees"]');
+  if (empTab) empTab.click();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteEmployee(id) {
+  if (confirm('Delete this employee profile?')) {
+    appState.employees = appState.employees.filter(x => x.id !== id);
+    saveState();
+    renderApp();
+    fetch(`/api/employees/${id}`, { method: 'DELETE' }).catch(() => {});
+  }
+}
+
+function deleteEmployeePayment(id) {
+  if (confirm('Delete this salary payment record?')) {
+    appState.employeePayments = appState.employeePayments.filter(x => x.id !== id);
+    saveState();
+    renderApp();
+    fetch(`/api/employee-payments/${id}`, { method: 'DELETE' }).catch(() => {});
+  }
+}
+
 // Settings Form for Cow Milk & Goat Milk Pricing Matrix
 function initSettingsForm() {
   const form = document.getElementById('settingsForm');
@@ -1419,6 +1723,8 @@ async function fetchStateFromBackend() {
     if (data.records && data.records.length > 0) appState.records = data.records;
     if (data.expenses && data.expenses.length > 0) appState.expenses = data.expenses;
     if (data.rates && data.rates.cattle) appState.rates = data.rates;
+    if (data.employees && data.employees.length > 0) appState.employees = data.employees;
+    if (data.employeePayments && data.employeePayments.length > 0) appState.employeePayments = data.employeePayments;
 
     saveState();
     updateRatePreviews();
@@ -1433,6 +1739,8 @@ function saveState() {
   localStorage.setItem('farm_customers', JSON.stringify(appState.customers));
   localStorage.setItem('farm_records', JSON.stringify(appState.records));
   localStorage.setItem('farm_expenses', JSON.stringify(appState.expenses));
+  localStorage.setItem('farm_employees', JSON.stringify(appState.employees));
+  localStorage.setItem('farm_employee_payments', JSON.stringify(appState.employeePayments));
 
   fetch('/api/rates', {
     method: 'PUT',
@@ -1550,6 +1858,8 @@ function renderApp() {
   renderCustomerDropdown();
   renderCustomerDirectory(processedRecords);
   renderExpensesTable();
+  renderEmployeesDirectory();
+  renderEmployeePaymentsDirectory();
   renderTable(processedRecords);
   renderCharts(processedRecords);
   if (appState.currentUser) applyRolePermissions(appState.currentUser);
@@ -2161,6 +2471,12 @@ function exportToExcel() {
     ["Goat Milk", goatLitres, goatRev, totRevAll > 0 ? (goatRev/totRevAll) : 0]
   ];
 
+  const empHeaders = ["Employee ID", "Employee Name", "Designation", "Phone Number", "Pay Structure", "Base Rate (Rs.)", "Joined Date", "Status"];
+  const empRows = (appState.employees || []).map(e => [
+    e.id, e.name, e.designation, e.phone || 'N/A', e.payType, e.baseSalary, e.joinedDate || '', e.status
+  ]);
+  const empDirectoryData = [empHeaders, ...empRows];
+
   const wb = XLSX.utils.book_new();
 
   const wsExpenses = XLSX.utils.aoa_to_sheet(expenseDirectoryData);
@@ -2168,9 +2484,11 @@ function exportToExcel() {
   const wsRates = XLSX.utils.aoa_to_sheet(settingsData);
   const wsTracker = XLSX.utils.aoa_to_sheet(trackerData);
   const wsSummary = XLSX.utils.aoa_to_sheet(categorySummaryData);
+  const wsEmployees = XLSX.utils.aoa_to_sheet(empDirectoryData);
 
   XLSX.utils.book_append_sheet(wb, wsExpenses, "Expense Directory");
   XLSX.utils.book_append_sheet(wb, wsCustomers, "Registered Customers");
+  XLSX.utils.book_append_sheet(wb, wsEmployees, "Employee Master");
   XLSX.utils.book_append_sheet(wb, wsTracker, "Daily Tracker");
   XLSX.utils.book_append_sheet(wb, wsSummary, "Milk Category Summary");
   XLSX.utils.book_append_sheet(wb, wsRates, "Rates & Settings");

@@ -71,6 +71,9 @@
         <a href="#expenses" class="nav-item" data-tab="expenses">
           <i class="fa-solid fa-receipt"></i> Farm Expenses
         </a>
+        <a href="#employees" class="nav-item" data-tab="employees">
+          <i class="fa-solid fa-users-gear"></i> Employees & Payroll
+        </a>
         <a href="#daily-entry" class="nav-item" data-tab="daily-entry">
           <i class="fa-solid fa-calendar-plus"></i> Daily Entry
         </a>
@@ -570,6 +573,196 @@
         </div>
       </section>
 
+      <!-- TAB: EMPLOYEES & PAYROLL MANAGEMENT -->
+      <section id="tab-employees" class="tab-content">
+        <!-- Form 1: Employee Registration -->
+        <div class="form-container" style="margin-bottom: 24px;">
+          <div class="form-header">
+            <h2 id="empFormTitle"><i class="fa-solid fa-user-gear"></i> Employee Registration & Profile Master</h2>
+            <p>Register farm workers, milkers, herdsmen, drivers, and daily wage / monthly salary rates.</p>
+          </div>
+
+          <form id="employeeForm" class="grid-form">
+            <input type="hidden" id="editingEmpId" value="">
+
+            <div class="form-section customer-section">
+              <h3 class="section-title text-teal"><i class="fa-solid fa-id-card-clip"></i> Employee Personal & Salary Profile</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="empName">Employee Full Name</label>
+                  <input type="text" id="empName" placeholder="e.g. Murugan Worker" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="empPhone">Phone Number</label>
+                  <input type="tel" id="empPhone" placeholder="e.g. 0771234567">
+                </div>
+
+                <div class="form-group">
+                  <label for="empDesignation">Job Role / Designation</label>
+                  <select id="empDesignation" class="select-input" required>
+                    <option value="Grass Cutter & Laborer">Grass Cutter & Laborer</option>
+                    <option value="Milker & Herdsman">Milker & Herdsman</option>
+                    <option value="Farm General Worker">Farm General Worker</option>
+                    <option value="Driver & Route Delivery">Driver & Route Delivery</option>
+                    <option value="Farm Manager">Farm Manager</option>
+                    <option value="Other Farm Staff">Other Farm Staff</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="empPayType">Salary / Wage Structure</label>
+                  <select id="empPayType" class="select-input" required>
+                    <option value="Daily Wage">Daily Wage (Per Day Rate)</option>
+                    <option value="Monthly Salary">Monthly Fixed Salary</option>
+                    <option value="Weekly Wage">Weekly Wage</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="empBaseSalary">Standard Rate / Salary (Rs.)</label>
+                  <input type="number" id="empBaseSalary" step="0.5" min="0" placeholder="e.g. 600.00" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="empJoinedDate">Joined Date</label>
+                  <input type="date" id="empJoinedDate">
+                </div>
+
+                <div class="form-group">
+                  <label for="empStatus">Account Status</label>
+                  <select id="empStatus" class="select-input">
+                    <option value="Active">Active Employee</option>
+                    <option value="Inactive">Inactive / On Leave</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-actions" style="margin-top: 16px;">
+                <button type="submit" id="btnSubmitEmpForm" class="btn btn-teal btn-lg">
+                  <i class="fa-solid fa-floppy-disk"></i> Register Employee Profile
+                </button>
+                <button type="button" id="btnResetEmpForm" class="btn btn-secondary btn-lg">Reset</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Form 2: Pay Salary / Record Worker Wage -->
+        <div class="form-container" style="margin-bottom: 32px;">
+          <div class="form-header">
+            <h2><i class="fa-solid fa-money-bill-wave"></i> Pay Salary & Worker Wages</h2>
+            <p>Record salary payouts or daily wage payments. Paid salaries automatically link to Farm Operating Expenses!</p>
+          </div>
+
+          <form id="employeePaymentForm" class="grid-form">
+            <div class="form-section expense-section">
+              <h3 class="section-title text-rose"><i class="fa-solid fa-file-invoice-dollar"></i> Salary Payment Details</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="paySelectEmp">Select Employee</label>
+                  <select id="paySelectEmp" class="select-input" required>
+                    <option value="">-- Select Employee --</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="payDate">Payment Date</label>
+                  <input type="date" id="payDate" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="payCategory">Payment Type</label>
+                  <select id="payCategory" class="select-input" required>
+                    <option value="Daily Wage / Salary">Daily Wage / Salary</option>
+                    <option value="Monthly Salary">Monthly Salary</option>
+                    <option value="Advance Payment">Advance Payment</option>
+                    <option value="Bonus / Allowance">Bonus / Allowance</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="payAmount">Amount Paid (Rs.)</label>
+                  <input type="number" id="payAmount" step="0.5" min="0" placeholder="0.00" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="payMethod">Payment Method</label>
+                  <select id="payMethod" class="select-input">
+                    <option value="Cash">Cash</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Mobile Pay">Mobile Pay</option>
+                  </select>
+                </div>
+
+                <div class="form-group full-width" style="grid-column: span 2;">
+                  <label for="payRemarks">Remarks / Notes</label>
+                  <input type="text" id="payRemarks" placeholder="e.g. Grass cutter daily wage for Murugan">
+                </div>
+              </div>
+
+              <div class="form-actions" style="margin-top: 16px;">
+                <button type="submit" class="btn btn-rose btn-lg">
+                  <i class="fa-solid fa-hand-holding-dollar"></i> Record & Pay Salary
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Directory 1: Registered Employees Directory Table -->
+        <div class="table-card" style="margin-bottom: 32px;">
+          <div class="table-header">
+            <h3><i class="fa-solid fa-users"></i> Registered Employees Master Directory</h3>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>EMP ID</th>
+                  <th>Employee Name</th>
+                  <th>Job Role / Designation</th>
+                  <th>Phone Number</th>
+                  <th>Pay Type</th>
+                  <th>Base Rate (Rs.)</th>
+                  <th>Joined Date</th>
+                  <th>Status</th>
+                  <th>Total Paid Out</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="empTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Directory 2: Salary Payment History Log Table -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Employee Salary & Wage Payment History</h3>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>PAY ID</th>
+                  <th>Payment Date</th>
+                  <th>Employee Name</th>
+                  <th>Payment Type</th>
+                  <th>Amount Paid (Rs.)</th>
+                  <th>Method</th>
+                  <th>Remarks / Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="empPayTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- TAB 4: DAILY ENTRY FORM (MILK & COMBINED) -->
       <section id="tab-daily-entry" class="tab-content">
         <div class="form-container">
@@ -994,6 +1187,10 @@
     <a href="#expenses" class="mobile-nav-item" data-tab="expenses">
       <i class="fa-solid fa-receipt"></i>
       <span>Expense</span>
+    </a>
+    <a href="#employees" class="mobile-nav-item" data-tab="employees">
+      <i class="fa-solid fa-users-gear"></i>
+      <span>Payroll</span>
     </a>
     <a href="#records" class="mobile-nav-item" data-tab="records">
       <i class="fa-solid fa-table-list"></i>
