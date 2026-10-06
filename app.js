@@ -1164,32 +1164,34 @@ function initFormListeners() {
     entryForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const selectedDate = entryDate.value;
+      const selectedDate = entryDate ? entryDate.value : (document.getElementById('entryDate')?.value || new Date().toISOString().split('T')[0]);
+      const nameVal = custName ? custName.value.trim() : (document.getElementById('custName')?.value.trim() || '');
+      const custTypeVal = custType ? custType.value : (document.getElementById('custType')?.value || 'Daily Customer');
       const pStatus = document.getElementById('paymentStatus') ? document.getElementById('paymentStatus').value : 'Paid';
       const amtPaidVal = Number(document.getElementById('amountPaid')?.value || 0);
 
       const recordData = {
         id: 'rec-' + selectedDate,
         date: selectedDate,
-        custType: custType.value,
+        custType: custTypeVal,
         custName: nameVal,
         paymentStatus: pStatus,
         amountPaid: amtPaidVal,
-        cattle_q175: Number(document.getElementById('cattle_q175').value || 0),
-        cattle_q475: Number(document.getElementById('cattle_q475').value || 0),
-        cattle_q500: Number(document.getElementById('cattle_q500').value || 0),
-        cattle_q750: Number(document.getElementById('cattle_q750').value || 0),
-        cattle_q1000: Number(document.getElementById('cattle_q1000').value || 0),
-        goat_q175: Number(document.getElementById('goat_q175').value || 0),
-        goat_q475: Number(document.getElementById('goat_q475').value || 0),
-        goat_q500: Number(document.getElementById('goat_q500').value || 0),
-        goat_q750: Number(document.getElementById('goat_q750').value || 0),
-        goat_q1000: Number(document.getElementById('goat_q1000').value || 0),
-        silage: Number(document.getElementById('expSilage').value || 0),
-        wage: Number(document.getElementById('expWage').value || 0),
-        feed: Number(document.getElementById('expFeed').value || 0),
-        other: Number(document.getElementById('expOther').value || 0),
-        remarks: document.getElementById('remarks').value
+        cattle_q175: Number(document.getElementById('cattle_q175')?.value || 0),
+        cattle_q475: Number(document.getElementById('cattle_q475')?.value || 0),
+        cattle_q500: Number(document.getElementById('cattle_q500')?.value || 0),
+        cattle_q750: Number(document.getElementById('cattle_q750')?.value || 0),
+        cattle_q1000: Number(document.getElementById('cattle_q1000')?.value || 0),
+        goat_q175: Number(document.getElementById('goat_q175')?.value || 0),
+        goat_q475: Number(document.getElementById('goat_q475')?.value || 0),
+        goat_q500: Number(document.getElementById('goat_q500')?.value || 0),
+        goat_q750: Number(document.getElementById('goat_q750')?.value || 0),
+        goat_q1000: Number(document.getElementById('goat_q1000')?.value || 0),
+        silage: Number(document.getElementById('expSilage')?.value || 0),
+        wage: Number(document.getElementById('expWage')?.value || 0),
+        feed: Number(document.getElementById('expFeed')?.value || 0),
+        other: Number(document.getElementById('expOther')?.value || 0),
+        remarks: document.getElementById('remarks')?.value || ''
       };
 
       const existingIndex = appState.records.findIndex(r => r.date === selectedDate);
@@ -1202,6 +1204,12 @@ function initFormListeners() {
         appState.records.sort((a, b) => new Date(b.date) - new Date(a.date));
         alert(`✅ New Daily Record for Date ${selectedDate} Saved Successfully!`);
       }
+
+      fetch('/api/records', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(recordData)
+      }).catch(() => {});
 
       saveState();
       renderApp();
